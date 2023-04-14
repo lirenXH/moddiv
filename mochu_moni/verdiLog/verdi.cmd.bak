@@ -1,0 +1,268 @@
+debImport "-f" "./file.f"
+debLoadSimResult /home/xuhao/moddiv/mochu_moni/rtl.fsdb
+wvCreateWindow
+srcDeselectAll -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb" -delim "."
+srcHBSelect "MINV_MDIV_tb" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.COUNTER" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV.COUNTER" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.COUNTER" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "clk" -line 20 -pos 1 -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "rst" -line 20 -pos 1 -win $_nTrace1
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave2
+wvZoom -win $_nWave2 0.000000 57068.700633
+srcDeselectAll -win $_nTrace1
+srcSelect -win $_nTrace1 -range {20 21 8 1 1 1} -backward
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave2
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "datain" -line 19 -pos 1 -win $_nTrace1
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave2
+srcDeselectAll -win $_nTrace1
+srcSelect -win $_nTrace1 -range {17 18 2 9 6 1} -backward
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "minv_mdiv_flag" -line 18 -pos 1 -win $_nTrace1
+srcAction -pos 17 5 5 -win $_nTrace1 -name "minv_mdiv_flag" -ctrlKey off
+wvSetCursor -win $_nWave2 136931.828292 -snap {("G2" 0)}
+srcDeselectAll -win $_nTrace1
+debReload
+wvSelectSignal -win $_nWave2 {( "G1" 13 )} 
+wvSetCursor -win $_nWave2 105163.644128 -snap {("G1" 10)}
+wvSetPosition -win $_nWave2 {("G1" 7)}
+wvSetPosition -win $_nWave2 {("G1" 13)}
+srcTraceConnectivity "MINV_MDIV_tb.MINV_MDIV.minv_mdiv_flag" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.MINV_MDIV_DATAPATH.MINV_FLA_REG_modify" -win \
+           $_nTrace1
+srcSetScope -win $_nTrace1 \
+           "MINV_MDIV_tb.MINV_MDIV.MINV_MDIV_DATAPATH.MINV_FLA_REG_modify" \
+           -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.MINV_MDIV_DATAPATH.MINV_FLA_REG_modify" -win \
+           $_nTrace1
+wvZoomOut -win $_nWave2
+srcDeselectAll -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.COUNTER" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV.COUNTER" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.COUNTER" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+wvZoom -win $_nWave2 81611.369662 390529.574288
+wvZoom -win $_nWave2 131082.256524 187836.357285
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoom -win $_nWave2 1112434.173043 1230195.545374
+wvZoom -win $_nWave2 1205888.927596 1221604.413228
+wvSelectSignal -win $_nWave2 {( "G1" 13 )} 
+wvSelectSignal -win $_nWave2 {( "G1" 5 )} 
+wvSelectSignal -win $_nWave2 {( "G1" 5 6 )} 
+wvSelectSignal -win $_nWave2 {( "G1" 12 )} 
+srcHBSelect "MINV_FLA_REG" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_FLA_REG" -delim "."
+srcHBSelect "MINV_FLA_REG" -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "minv_flag_in" -line 13 -pos 1 -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "minv_flag_in" -line 13 -pos 1 -win $_nTrace1
+srcAction -pos 12 8 9 -win $_nTrace1 -name "minv_flag_in" -ctrlKey off
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "minv_flag_in" -line 13 -pos 1 -win $_nTrace1
+srcAction -pos 12 8 9 -win $_nTrace1 -name "minv_flag_in" -ctrlKey off
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "minv_flag" -line 13 -pos 1 -win $_nTrace1
+srcAction -pos 12 4 2 -win $_nTrace1 -name "minv_flag" -ctrlKey off
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "minv_flag" -line 15 -pos 1 -win $_nTrace1
+srcAction -pos 14 4 4 -win $_nTrace1 -name "minv_flag" -ctrlKey off
+srcTraceLoad "MINV_FLA_REG.minv_flag\[1:0\]" -win $_nTrace1
+srcHBSelect "MUX41_16" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MUX41_16" -delim "."
+srcHBSelect "MUX41_16" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.MINV_MDIV_DATAPATH.mux3" -win $_nTrace1
+srcHBSelect "MINV_FLA_REG" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_FLA_REG" -delim "."
+srcHBSelect "MINV_FLA_REG" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.MINV_MDIV_DATAPATH.regt_h2b" -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+debReload
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+wvSetCursor -win $_nWave2 1213418.099316 -snap {("G2" 0)}
+wvZoom -win $_nWave2 1213613.843799 1221296.814755
+wvZoom -win $_nWave2 1215835.343407 1220544.922579
+wvSetCursor -win $_nWave2 1217435.929923 -snap {("G1" 6)}
+wvSetCursor -win $_nWave2 1217435.929923 -snap {("G1" 6)}
+srcActiveTrace "MINV_MDIV_tb.MINV_MDIV.outx2" -win $_nTrace1 -TraceByDConWave \
+           -TraceTime 1217400 -TraceValue 1
+wvSelectSignal -win $_nWave2 {( "G1" 8 )} 
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+wvSetCursor -win $_nWave2 1217104.918575 -snap {("G1" 12)}
+srcActiveTrace "MINV_MDIV_tb.MINV_MDIV.minv_mdiv_rdy" -win $_nTrace1 \
+           -TraceByDConWave -TraceTime 1217100 -TraceValue 1
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "set_mmul_rdy" -line 10 -pos 1 -win $_nTrace1
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave2
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "set_mmul_rdy" -line 10 -pos 1 -win $_nTrace1
+srcAction -pos 9 7 10 -win $_nTrace1 -name "set_mmul_rdy" -ctrlKey off
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "minv_flag_we" -line 362 -pos 1 -win $_nTrace1
+srcAction -pos 361 5 8 -win $_nTrace1 -name "minv_flag_we" -ctrlKey off
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "set_minv_rdy" -line 362 -pos 1 -win $_nTrace1
+srcAction -pos 361 3 9 -win $_nTrace1 -name "set_minv_rdy" -ctrlKey off
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "minv_flag_we" -line 362 -pos 1 -win $_nTrace1
+srcAction -pos 361 5 2 -win $_nTrace1 -name "minv_flag_we" -ctrlKey off
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "cur_state" -line 355 -pos 1 -win $_nTrace1
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave2
+wvSelectSignal -win $_nWave2 {( "G1" 15 )} 
+wvSetRadix -win $_nWave2 -format UDec
+wvSelectGroup -win $_nWave2 {G2}
+wvDisplayGridCount -win $_nWave2 -off
+wvGetSignalClose -win $_nWave2
+wvReloadFile -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoom -win $_nWave2 1209962.989622 1220270.431582
+wvZoom -win $_nWave2 1211549.455333 1215588.982187
+wvSelectGroup -win $_nWave2 {G1}
+wvRenameGroup -win $_nWave2 {G1} {TOP}
+wvSelectSignal -win $_nWave2 {( "TOP" 12 )} 
+wvSaveSignal -win $_nWave2 "/home/xuhao/moddiv/mochu_moni/signal.rc"
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoom -win $_nWave2 9280.812722 34939.530249
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.MINV_MDIV_CONTROL" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV.MINV_MDIV_CONTROL" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.MINV_MDIV_CONTROL" -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "clk" -line 9 -pos 1 -win $_nTrace1
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvSetCursor -win $_nWave2 3821.511121 -snap {("TOP" 16)}
+wvSetMarker -win $_nWave2 1209250.000000
+wvZoom -win $_nWave2 328649.956406 599977.245996
+wvZoom -win $_nWave2 381153.235308 410241.258791
+wvZoom -win $_nWave2 387441.838249 389473.341669
+wvSetCursor -win $_nWave2 387901.818339 -snap {("TOP" 16)}
+wvSetMarker -win $_nWave2 388000.000000
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvSetCursor -win $_nWave2 2729.650801 -snap {("TOP" 10)}
+wvSetMarker -win $_nWave2 1211400.000000
+wvZoom -win $_nWave2 1173203.914146 1225067.279359
+wvZoom -win $_nWave2 1204072.767640 1220291.604715
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvSetCursor -win $_nWave2 3821.511121 -snap {("TOP" 7)}
+wvZoom -win $_nWave2 1175933.564947 1226159.139680
+wvZoom -win $_nWave2 1206520.225004 1222338.599964
+wvZoom -win $_nWave2 1210369.269088 1215935.254228
+wvSetCursor -win $_nWave2 1212307.955193 -snap {("TOP" 12)}
+wvSelectSignal -win $_nWave2 {( "TOP" 10 )} 
+debExit

@@ -27,7 +27,8 @@ module  MINV_MDIV(regx1out,regx2out,minv_mdiv_rdy,minv_mdiv_flag,
        regx1_h2b_we,regx2_h2b_we,regu_h2b_we,regt_h2b_we,count_en,
        regx1_h2b_rs_en,regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en;         
   wire [2:0] mux0_sel,mux1_sel;
-  wire [3:0] cur_state,count;
+  wire [3:0] cur_state;
+  wire [2:0] count;
   
   MINV_MDIV_DATAPATH  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_mdiv_flag,minv_mdiv_rdy,
                       temp_sign,x1_sign,x2_sign,u_flag,datain,clk,rst,regu_we|loada,

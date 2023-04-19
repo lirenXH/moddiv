@@ -8,7 +8,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
                      regu_h2b_rs_en,regt_h2b_rs_en,mux0_sel,mux1_sel,cur_state,count_en);
   input clk,rst,minv_en,regx1out0,regx2out0,temp_sign,x1_sign,x2_sign,u_flag;
   input [255:0] u,regvout;
-  input [3:0] count; 
+  input [2:0] count; 
   
   output regu_we,regu_cyc,regu_rs,regv_we,regv_cyc,regv_rs,regp_we,regp_cyc,
          regx1_we,regx1_cyc,regx1_rs,regx2_we,regx2_cyc,regx2_rs,regt_we,regt_cyc,regt_rs,

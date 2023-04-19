@@ -1,8 +1,8 @@
 `timescale 1ns / 1ns
 module  MINV_MDIV_tb;
-  wire [15:0] regx1out,regx2out;  
+  wire [31:0] regx1out,regx2out;  
   wire minv_mdiv_rdy,minv_mdiv_flag;  
-  reg [15:0] datain;
+  reg [31:0] datain;
   reg  clk,rst,minv_mdiv_en,loada,loadp,outx1,outx2,loadb,minv_mdiv;
   reg [255:0] a,b,p;
     

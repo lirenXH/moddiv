@@ -1,4 +1,4 @@
-//使能置一寄存器
+//使能置一寄存器  1
 module RDY_FLA_REG(mmul_rdy,clk,mmul_en,set_mmul_rdy);
   output mmul_rdy;
   input clk,mmul_en,set_mmul_rdy;

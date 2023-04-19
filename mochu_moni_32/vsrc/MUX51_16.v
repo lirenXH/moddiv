@@ -1,9 +1,9 @@
-//16位 5选1
-module MUX51_16(out,sel,a,b,c,d,e);
-  output[15:0] out;
-  input[15:0] a,b,c,d,e;
+//32位 5选1  1
+module MUX51_32(out,sel,a,b,c,d,e);
+  output[31:0] out;
+  input[31:0] a,b,c,d,e;
   input [2:0] sel;
-  reg [15:0] out;
+  reg [31:0] out;
 
   always@(sel or a or b or c or d or e)
       case(sel)
@@ -12,6 +12,6 @@ module MUX51_16(out,sel,a,b,c,d,e);
           3'b010: out=c; 
           3'b011: out=d;
           3'b100: out=e;          
-          default: out=16'hxxxx;       
+          default: out=32'h0000_0000;       
       endcase
 endmodule

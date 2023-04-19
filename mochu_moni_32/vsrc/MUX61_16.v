@@ -1,9 +1,9 @@
-//16位 6选1
-module MUX61_16(out,sel,a,b,c,d,e,f);
-  output[15:0] out;
-  input[15:0] a,b,c,d,e,f;
+//32位 6选1 1
+module MUX61_32(out,sel,a,b,c,d,e,f);
+  output[31:0] out;
+  input[31:0] a,b,c,d,e,f;
   input [2:0] sel;
-  reg [15:0] out;
+  reg [31:0] out;
 
   always@(sel or a or b or c or d or e or f)
       case(sel)
@@ -13,6 +13,6 @@ module MUX61_16(out,sel,a,b,c,d,e,f);
           3'b011: out=d;
           3'b100: out=e;
           3'b101: out=f;          
-          default: out=16'hxxxx;       
+          default: out=32'h0000_0000;       
       endcase
 endmodule

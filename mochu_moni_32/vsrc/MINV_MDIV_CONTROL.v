@@ -67,7 +67,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 			   else
 			       nxt_state = S8;			       			  			
 			S4:
-			   if(count==15)
+			   if(count==7)
 			       nxt_state = S3;
 			   else
 			       nxt_state = S4;			        
@@ -82,19 +82,19 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 			   else
 			       nxt_state = S8;			       
 			S7:
-			   if(count==15)
+			   if(count==7)
 			       nxt_state = S6;
 			   else
 			       nxt_state = S7;			       
 			S8:
-			   if(count!=15)
+			   if(count!=7)
 			       nxt_state = S8;
 			   else if(temp_sign)
 			       nxt_state = S10;
 			   else
 			       nxt_state = S9;
 			S9:
-			   if(count!=15)
+			   if(count!=7)
 			       nxt_state = S9;
 			   else if(x1_sign)
 			       nxt_state = S12;
@@ -107,12 +107,12 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 			   else
 			       nxt_state = S14; 
 			S10:
-			   if(count==15)
+			   if(count==7)
 			       nxt_state = S11;
 			   else
 			       nxt_state = S10;
       S11:
-			   if(count!=15)
+			   if(count!=7)
 			       nxt_state = S11;
 			   else if(x2_sign)
 			       nxt_state = S13;
@@ -125,7 +125,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 			   else
 			       nxt_state = S14;
 			S12:
-			   if(count!=15)
+			   if(count!=7)
 			       nxt_state = S12;
 			   else if((u!=1)&(regvout!=1)&(u[0]==0))
 			       nxt_state = S2;
@@ -136,7 +136,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 			   else
 			       nxt_state = S14;
 			S13:
-			   if(count!=15)
+			   if(count!=7)
 			       nxt_state = S13;
 			   else if((u!=1)&(regvout!=1)&(u[0]==0))
 			       nxt_state = S2;
@@ -343,7 +343,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 	always @(cur_state or temp_sign or count)
 		case(cur_state)
 			S8:			     	  
-				if(count==4'd15)
+				if(count==4'd7)
 				  u_flag_set=~temp_sign;
 				else 
 				  u_flag_set=1'b0;
@@ -364,7 +364,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 	always @(cur_state or count)
 		case(cur_state)
 			S4,S9,S12:			     	  
-				regx1_h2b_we=(count==4'd15);
+				regx1_h2b_we=(count==4'd7);
 			default:
 			  regx1_h2b_we=1'b0;
 		endcase
@@ -372,7 +372,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 	always @(cur_state or count)
 		case(cur_state)
 			S7,S11,S13:			     	  
-				regx2_h2b_we=(count==4'd15);
+				regx2_h2b_we=(count==4'd7);
 			default:
 			  regx2_h2b_we=1'b0;
 		endcase
@@ -380,7 +380,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 	always @(cur_state or u_flag or count)
 		case(cur_state)
 			S8:			     	  
-				regu_h2b_we=~u_flag & (count==4'd15);
+				regu_h2b_we=~u_flag & (count==4'd7);
 			default:
 			  regu_h2b_we=1'b0;
 		endcase
@@ -388,7 +388,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 	always @(cur_state or u_flag or count)
 		case(cur_state)
 			S8:			     	  
-				regt_h2b_we=u_flag & (count==4'd15);
+				regt_h2b_we=u_flag & (count==4'd7);
 			default:
 			  regt_h2b_we=1'b0;
 		endcase

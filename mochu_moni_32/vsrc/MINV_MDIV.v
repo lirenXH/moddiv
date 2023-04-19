@@ -6,17 +6,17 @@
 //minv_rdy=1 represent that modular inverse operation is completed.
 //loada is used to load soure operand a in to regu,
 //loadp is used to load parameter p in to regv and regp,
-//outx1 is used to output the 256 bits data stored in regx1 by right shift 16bit per cycle,
-//outx2 is used to output the 256 bits data stored in regx2 by right shift 16bit per cycle,
+//outx1 is used to output the 256 bits data stored in regx1 by right shift 32bit per cycle,
+//outx2 is used to output the 256 bits data stored in regx2 by right shift 32bit per cycle,
 //minv_mdiv=1'b1 represent modular inverse operation,
 //minv_mdiv=1'b0 represent modular division operation.
 //modified in 2016.11.27
 module  MINV_MDIV(regx1out,regx2out,minv_mdiv_rdy,minv_mdiv_flag,
                   datain,clk,rst,minv_mdiv,minv_mdiv_en,loada,loadb,loadp,outx1,outx2);
   
-  output [15:0] regx1out,regx2out;  
+  output [31:0] regx1out,regx2out;  
   output minv_mdiv_rdy,minv_mdiv_flag;  
-  input [15:0] datain;
+  input [31:0] datain;
   input  clk,rst,minv_mdiv_en,loada,loadp,outx1,outx2,loadb,minv_mdiv;
   
   wire [255:0] u,regvout;

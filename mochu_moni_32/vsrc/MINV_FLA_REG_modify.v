@@ -1,3 +1,4 @@
+// 1
 module MINV_FLA_REG_modify(minv_flag,clk,minv_flag_in,minv_flag_we,rst);
   output  minv_flag;
   input  clk,minv_flag_we; 

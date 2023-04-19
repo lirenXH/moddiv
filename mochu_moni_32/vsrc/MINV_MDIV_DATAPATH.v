@@ -1,4 +1,4 @@
-//modified in 2016.11.27
+//modified in 2016.11.27  1
 module  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_flag,minv_rdy,
                       temp_sign,x1_sign,x2_sign,u_flag,datain,clk,rst,regu_we,
                       regu_cyc,regu_rs,regv_we,regv_cyc,regv_rs,regp_we,regp_cyc,
@@ -9,11 +9,11 @@ module  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_flag,minv_rdy,
                       regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en,minv_mdiv);
                       
   output [255:0] u,regvout;
-  output [15:0] regx1out,regx2out;  
+  output [31:0] regx1out,regx2out;  
   output minv_rdy,minv_flag,temp_sign,x1_sign,x2_sign,u_flag;
   //output [1:0] minv_flag;
   
-  input [15:0] datain;
+  input [31:0] datain;
   input  clk,rst,regu_we,regu_cyc,regu_rs,regv_we,regv_cyc,regv_rs,regp_we,regp_cyc,minv_en,
          regx1_we,regx1_cyc,regx1_rs,regx2_we,regx2_cyc,regx2_rs,regt_we,regt_cyc,regt_rs,
          add_sub,carry_sel,mux3_sel,u_flag_set,minv_flag_we,set_minv_rdy,
@@ -24,7 +24,7 @@ module  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_flag,minv_rdy,
   input [3:0] cur_state;   
   
   wire [255:0] reguout,regtout;
-  wire [15:0] regpout,mux0out,mux1out,adderin,sum_16,mux3out;
+  wire [31:0] regpout,mux0out,mux1out,adderin,sum_32,mux3out;
   wire c_out,carry_in,carry,u_flag;
   wire [1:0] regu_h2b_out,regx1_h2b_out,regx2_h2b_out,regt_h2b_out,
              regx1_h2b_in,regx2_h2b_in,x1_sub_x2_h2b,x1_add_p_h2b,x2_sub_x1_h2b,x2_add_p_h2b,
@@ -32,27 +32,27 @@ module  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_flag,minv_rdy,
   reg [1:0]  temp_h2b_in;
   reg  minv_flag_in; 
    
-  MUX21_16  mux3(mux3out,mux3_sel,datain,sum_16);//mux3_sel=0,select datain,mux3_sel=1,select sum_16.
+  MUX21_32  mux3(mux3out,mux3_sel,datain,sum_32);//mux3_sel=0,select datain,mux3_sel=1,select sum_32.
   MINV_REG_U_T  regu(reguout,regu_h2b_out[0],mux3out,clk,regu_we,regu_cyc,regu_rs);
-  //MUX21_16  mux4(mux4out,mux4_sel,datain,sum_16);//mux4_sel=0,select datain,mux4_sel=1,select sum_16.
+  //MUX21_32  mux4(mux4out,mux4_sel,datain,sum_32);//mux4_sel=0,select datain,mux4_sel=1,select sum_32.
   //MINV_REG_V  regv(regvout,mux4out,clk,regv_we,regv_cyc,regv_rs);    
   MINV_REG_V  regv(regvout,mux3out,clk,regv_we,regv_cyc,regv_rs);
   CYC_SHI_REG_256  regp(regpout,datain,clk,regp_we,regp_cyc);  
   
-  MUX51_16  mux0(mux0out,mux0_sel,reguout[15:0],regvout[15:0],regx1out,regx2out,regtout[15:0]);
-  MUX61_16  mux1(mux1out,mux1_sel,reguout[15:0],regvout[15:0],regx1out,regx2out,regtout[15:0],regpout);  
-  assign  adderin=mux1out^{16{add_sub}};  
-  BCLA_ADD_16  add_16(sum_16,c_out,mux0out,adderin,carry_in);  
+  MUX51_32  mux0(mux0out,mux0_sel,reguout[31:0],regvout[31:0],regx1out,regx2out,regtout[31:0]);
+  MUX61_32  mux1(mux1out,mux1_sel,reguout[31:0],regvout[31:0],regx1out,regx2out,regtout[31:0],regpout);  
+  assign  adderin=mux1out^{32{add_sub}};  
+  BCLA_ADD_32  add_32(sum_32,c_out,mux0out,adderin,carry_in);  
   DFF0  dff0(carry,c_out,clk);
   //DFF1  dff1(carry256,c_out,clk,dff1_we);
   MUX21  mux2(carry_in,carry_sel,carry,add_sub);//carry_sel=0,select carry;carry_sel=1,select add_sub.
   
-  //MUX21_16  mux5(mux5out,mux5_sel,datain,sum_16);//mux5_sel=0,select datain,mux5_sel=1,select sum_16.2016.11.21 revised
+  //MUX21_32  mux5(mux5out,mux5_sel,datain,sum_32);//mux5_sel=0,select datain,mux5_sel=1,select sum_32.2032.11.21 revised
   //MINV_REG_X1  regx1(regx1out,regx1_h2b_out[0],mux5out,clk,regx1_we,regx1_cyc,regx1_rs,minv_en & minv_mdiv);//add set 1 function.
   MINV_REG_X1  regx1(regx1out,regx1_h2b_out[0],mux3out,clk,regx1_we,regx1_cyc,regx1_rs,minv_en & minv_mdiv);
-  //minv_mdiv=1,represent modular inversion operation,minv_mdiv=0,represent modular division operation.2016.11.21
-  MINV_REG_X2  regx2(regx2out,regx2_h2b_out[0],sum_16,clk,regx2_we,regx2_cyc,regx2_rs,minv_en);//add clear 0 function.       
-  MINV_REG_U_T  regt(regtout,regt_h2b_out[0],sum_16,clk,regt_we,regt_cyc,regt_rs);
+  //minv_mdiv=1,represent modular inversion operation,minv_mdiv=0,represent modular division operation.2032.11.21
+  MINV_REG_X2  regx2(regx2out,regx2_h2b_out[0],sum_32,clk,regx2_we,regx2_cyc,regx2_rs,minv_en);//add clear 0 function.       
+  MINV_REG_U_T  regt(regtout,regt_h2b_out[0],sum_32,clk,regt_we,regt_cyc,regt_rs);
   
   MINV_REG_H2B  regx1_h2b(regx1_h2b_out,regx1_h2b_in,clk,regx1_h2b_we,minv_en,regx1_h2b_rs_en);
   MINV_REG_H2B  regx2_h2b(regx2_h2b_out,regx2_h2b_in,clk,regx2_h2b_we,minv_en,regx2_h2b_rs_en);
@@ -121,7 +121,7 @@ module  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_flag,minv_rdy,
       default: minv_flag_in=1'bx;
     endcase
 
-  //assign regtout_16=regtout[15:0];
+  //assign regtout_32=regtout[15:0];
   assign u=u_flag ? reguout : regtout;
   
   assign temp_sign=temp_h2b_in[1];

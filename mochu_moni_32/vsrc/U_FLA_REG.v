@@ -1,4 +1,4 @@
-//指定flag输出寄存器
+//指定flag输出寄存器  1
 module U_FLA_REG(u_flag,clk,u_flag_rst,u_flag_set);
   output  u_flag;
   input  clk,u_flag_rst,u_flag_set;  

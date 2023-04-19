@@ -1,9 +1,9 @@
-//使能 16位寄存器
-module  REG_16(regout,regin,clk,we);
-  output [15:0] regout;
+//使能 32位寄存器  1
+module  REG_32(regout,regin,clk,we);
+  output [31:0] regout;
   input  clk,we;
-  input  [15:0] regin;
-  reg [15:0] regout;
+  input  [31:0] regin;
+  reg [31:0] regout;
 
   always @ (posedge clk)
 	   begin

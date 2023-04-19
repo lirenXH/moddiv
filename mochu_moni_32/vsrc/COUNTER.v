@@ -1,12 +1,12 @@
-//计数器 0-15
+//计数器 0-7 comlete
 module COUNTER(count,clk,rst,count_en); 
-	output [3:0] count;
+	output [2:0] count;
 	input clk,rst,count_en;
-	reg  [3:0] count;
+	reg  [2:0] count;
 	
 	always @(posedge clk)
 		if(rst)
-			count <= 4'd0; 
+			count <= 3'd0; 
 		else	if(count_en)
 			count <= count+1;
 		else

@@ -1,14 +1,14 @@
-//置一 使能 16位寄存器
-module  REG_16_SET(regout,regin,clk,we,set);
-  output [15:0] regout;
+//置一 使能 32位寄存器 1
+module  REG_32_SET(regout,regin,clk,we,set);
+  output [31:0] regout;
   input  clk,we,set;
-  input  [15:0] regin;
-  reg [15:0] regout;
+  input  [31:0] regin;
+  reg [31:0] regout;
 
   always @ (posedge clk)
 	   begin
 		    if(set)
-		       regout<=16'd1;
+		       regout<=32'd1;
 		    else if(we)
 					 regout<=regin;
 		    else 

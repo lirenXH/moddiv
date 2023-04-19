@@ -1,4 +1,4 @@
-//1位 2选1
+//1位 2选1  1
 module MUX21(out,sel,a,b);
   output out;
   input a,b;

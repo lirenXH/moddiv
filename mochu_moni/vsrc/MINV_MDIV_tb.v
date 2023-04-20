@@ -21,7 +21,7 @@ module  MINV_MDIV_tb;
             loadp=0;
             outx1=0;
             outx2=0;
-            minv_mdiv=0;//minv_mdiv=1,represent modular inversion operation, 模逆
+            minv_mdiv=1;//minv_mdiv=1,represent modular inversion operation, 模逆
                         //minv_mdiv=0,represent modular division operation b/a mod p.模除
                  
       #200  rst=0;

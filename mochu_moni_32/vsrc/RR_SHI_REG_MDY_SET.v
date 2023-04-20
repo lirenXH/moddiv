@@ -25,6 +25,6 @@ module  RR_SHI_REG_MDY_SET(regout,bit256,regin,clk,we,sel_rs,set);
   MUX21_32  MUX21_32_6(muxout6,sel_rs,regout5,{regout5[0],regout6[31:1]});
   REG_32_CLR  REG_32_6(regout6,muxout6,clk,we,set);
   MUX21_32  MUX21_32_7(muxout7,sel_rs,regout6,{regout6[0],regout[31:1]});
-  REG_32_CLR  REG_32_7(regout,muxout7,clk,we,set);
+  REG_32_SET  REG_32_7(regout,muxout7,clk,we,set);
        
 endmodule

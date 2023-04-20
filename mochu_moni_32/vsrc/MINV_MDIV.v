@@ -11,21 +11,23 @@
 //minv_mdiv=1'b1 represent modular inverse operation,
 //minv_mdiv=1'b0 represent modular division operation.
 //modified in 2016.11.27
-module  MINV_MDIV(regx1out,regx2out,minv_mdiv_rdy,minv_mdiv_flag,
-                  datain,clk,rst,minv_mdiv,minv_mdiv_en,loada,loadb,loadp,outx1,outx2);
+module  MINV_MDIV(result_out,minv_mdiv_rdy,minv_mdiv_flag,
+                  datain,clk,rst,minv_mdiv,minv_mdiv_en,loada,loadb,loadp,out_ready,out_valid);
   
-  output [31:0] regx1out,regx2out;  
-  output minv_mdiv_rdy,minv_mdiv_flag;  
+	output [31:0] result_out;
+  output minv_mdiv_rdy,minv_mdiv_flag,out_valid;  
   input [31:0] datain;
-  input  clk,rst,minv_mdiv_en,loada,loadp,outx1,outx2,loadb,minv_mdiv;
+  input  clk,rst,minv_mdiv_en,loada,loadp,out_ready,loadb,minv_mdiv;
   
   wire [255:0] u,regvout;
+	wire [31:0] regx1out,regx2out;  
   wire temp_sign,x1_sign,x2_sign,u_flag;
   wire regu_we,regu_cyc,regu_rs,regv_we,regv_cyc,regv_rs,regp_we,regp_cyc,
        regx1_we,regx1_cyc,regx1_rs,regx2_we,regx2_cyc,regx2_rs,regt_we,regt_cyc,regt_rs,
        add_sub,carry_sel,mux3_sel,u_flag_set,minv_flag_we,set_minv_rdy,
        regx1_h2b_we,regx2_h2b_we,regu_h2b_we,regt_h2b_we,count_en,
-       regx1_h2b_rs_en,regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en;         
+       regx1_h2b_rs_en,regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en,
+			 has_done;         
   wire [2:0] mux0_sel,mux1_sel;
   wire [3:0] cur_state;
   wire [2:0] count;
@@ -33,11 +35,12 @@ module  MINV_MDIV(regx1out,regx2out,minv_mdiv_rdy,minv_mdiv_flag,
   MINV_MDIV_DATAPATH  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_mdiv_flag,minv_mdiv_rdy,
                       temp_sign,x1_sign,x2_sign,u_flag,datain,clk,rst,regu_we|loada,
                       regu_cyc,regu_rs,regv_we|loadp,regv_cyc,regv_rs,regp_we|loadp,regp_cyc,
-                      regx1_we|outx1|loadb,regx1_cyc,regx1_rs,regx2_we|outx2,regx2_cyc,regx2_rs,regt_we,
+                      regx1_we|(out_ready && out_valid)|loadb,regx1_cyc,regx1_rs,regx2_we|(out_ready && out_valid),regx2_cyc,regx2_rs,regt_we,//result output fire x2
                       regt_cyc,regt_rs,mux0_sel,mux1_sel,add_sub,carry_sel,mux3_sel,
                       u_flag_set,minv_flag_we,minv_mdiv_en,set_minv_rdy,cur_state,regx1_h2b_we,
                       regx2_h2b_we,regu_h2b_we,regt_h2b_we,regx1_h2b_rs_en,
-                      regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en,minv_mdiv);
+                      regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en,minv_mdiv,
+											has_done);
 
   MINV_MDIV_CONTROL  MINV_MDIV_CONTROL(clk,rst,minv_mdiv_en,count,u,regvout,regx1out[0],regx2out[0],temp_sign,
                      x1_sign,x2_sign,u_flag,regu_we,regu_cyc,regu_rs,regv_we,
@@ -45,8 +48,10 @@ module  MINV_MDIV(regx1out,regx2out,minv_mdiv_rdy,minv_mdiv_flag,
                      regx2_we,regx2_cyc,regx2_rs,regt_we,regt_cyc,regt_rs,add_sub,
                      carry_sel,mux3_sel,u_flag_set,minv_flag_we,set_minv_rdy,
                      regx1_h2b_we,regx2_h2b_we,regu_h2b_we,regt_h2b_we,regx1_h2b_rs_en,regx2_h2b_rs_en,
-                     regu_h2b_rs_en,regt_h2b_rs_en,mux0_sel,mux1_sel,cur_state,count_en);
+                     regu_h2b_rs_en,regt_h2b_rs_en,mux0_sel,mux1_sel,cur_state,count_en,
+                     out_ready,out_valid,has_done);
   
+	assign result_out = minv_mdiv_flag ? regx2out : regx1out ;
   
   COUNTER  COUNTER(count,clk,rst,count_en);
 endmodule

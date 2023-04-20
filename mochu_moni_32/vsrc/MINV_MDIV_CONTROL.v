@@ -5,11 +5,14 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
                      regx2_we,regx2_cyc,regx2_rs,regt_we,regt_cyc,regt_rs,add_sub,
                      carry_sel,mux3_sel,u_flag_set,minv_flag_we,set_minv_rdy,
                      regx1_h2b_we,regx2_h2b_we,regu_h2b_we,regt_h2b_we,regx1_h2b_rs_en,regx2_h2b_rs_en,
-                     regu_h2b_rs_en,regt_h2b_rs_en,mux0_sel,mux1_sel,cur_state,count_en);
+                     regu_h2b_rs_en,regt_h2b_rs_en,mux0_sel,mux1_sel,cur_state,count_en,
+					 out_ready,out_valid,has_done);
   input clk,rst,minv_en,regx1out0,regx2out0,temp_sign,x1_sign,x2_sign,u_flag;
   input [255:0] u,regvout;
   input [2:0] count; 
-  
+  input out_ready;
+  output reg out_valid,has_done;
+
   output regu_we,regu_cyc,regu_rs,regv_we,regv_cyc,regv_rs,regp_we,regp_cyc,
          regx1_we,regx1_cyc,regx1_rs,regx2_we,regx2_cyc,regx2_rs,regt_we,regt_cyc,regt_rs,
          add_sub,carry_sel,mux3_sel,u_flag_set,minv_flag_we,set_minv_rdy,
@@ -27,7 +30,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 
 //define parameters   
   parameter  S0=4'd0,S1=4'd1,S2=4'd2,S3=4'd3,S4=4'd4,S5=4'd5,S6=4'd6,S7=4'd7,S8=4'd8,
-             S9=4'd9,S10=4'd10,S11=4'd11,S12=4'd12,S13=4'd13,S14=4'd14;
+             S9=4'd9,S10=4'd10,S11=4'd11,S12=4'd12,S13=4'd13,S14=4'd14,S15=4'd15;
   
 //state register
   always @(posedge clk)
@@ -38,7 +41,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 			
 //next state generation logic
  	always @(cur_state or minv_en or count or u or regvout or regx1out0 or regx2out0 
- 	         or temp_sign or x1_sign or x2_sign)
+ 	         or temp_sign or x1_sign or x2_sign or out_ready)
 		case(cur_state)
 			S0:			     	  
 				 if(minv_en)
@@ -147,7 +150,15 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 			   else
 			       nxt_state = S14;
 			S14:
-			   nxt_state = S0;
+			   if(out_ready)
+				   nxt_state = S15;
+			   else
+				   nxt_state = S14;
+			S15:
+			   if(count!=7)
+			       nxt_state = S15;
+			   else
+			   	   nxt_state = S0;
 			default:
 			   nxt_state = S0;
 		endcase
@@ -427,7 +438,7 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 		
 	always @(cur_state)
 		case(cur_state)
-			S4,S7,S8,S9,S10,S11,S12,S13:			     	  
+			S4,S7,S8,S9,S10,S11,S12,S13,S15:			     	  
 				count_en=1'b1;
 			default:
 			  count_en=1'b0;
@@ -462,13 +473,20 @@ module  MINV_MDIV_CONTROL(clk,rst,minv_en,count,u,regvout,regx1out0,regx2out0,te
 			default:
 			  mux1_sel=3'd0;
 		endcase
-/*		
+	always @(cur_state or u_flag)
+	case(cur_state)
+		S15:
+			out_valid = 1'b1;
+		default:
+			out_valid = 1'b0;
+	endcase
+
 	always @(cur_state)
 		case(cur_state)
 			S0:			     	  
-				mux5_sel=1'b0;
+				has_done=1'b1;
 			default:
-			  mux5_sel=1'b1;
+			  has_done=1'b0;
 		endcase
-*/
+
 endmodule

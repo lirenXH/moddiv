@@ -2,11 +2,11 @@ Magic 271485
 Revision Verdi_O-2018.09-SP2
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 0 27 2560 588 473 65
+viewPort 0 27 2560 588 100 65
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
-openDirFile -d / "" "/home/xuhao/moddiv/mochu_moni/rtl.fsdb"
+openDirFile -d / "" "/home/xuhao/moddiv/mochu_moni_32/rtl.fsdb"
 
 ; file time scale:
 ; fileTimeScale ### s|ms|us|ns|ps
@@ -16,16 +16,16 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 4304.026233 12660.693251
-cursor 6800.000000
+zoom 0.000000 43702.700000
+cursor 0.000000
 marker 0.000000
 
 ; user define markers
 ; userMarker time_pos marker_name color linestyle
 ; visible top row signal index
-top 9
+top 0
 ; marker line index
-markerPos 19
+markerPos 2
 
 ; event list
 ; addEvent event_name event_expression
@@ -45,59 +45,10 @@ COMPLEX_EVENT_END
 curSTATUS ByChange
 
 
-aliasmapname MINV_MDIV_CONTROL.cur_state
-nalias S0		4'b0000		NULL
-nalias S4		4'b0100		NULL
-nalias S1		4'b0001		NULL
-nalias S10		4'b1010		NULL
-nalias S5		4'b0101		NULL
-nalias S11		4'b1011		NULL
-nalias S14		4'b1110		NULL
-nalias S8		4'b1000		NULL
-nalias S2		4'b0010		NULL
-nalias S12		4'b1100		NULL
-nalias S9		4'b1001		NULL
-nalias S6		4'b0110		NULL
-nalias S3		4'b0011		NULL
-nalias S13		4'b1101		NULL
-nalias S7		4'b0111		NULL
-
 addGroup "G1"
-activeDirFile "" "/home/xuhao/moddiv/mochu_moni/rtl.fsdb"
-addSignal -h 15 /MINV_MDIV_tb/MINV_MDIV/datain[15:0]
-addSignal -h 15 -holdScope minv_mdiv
-addSignal -h 15 -holdScope minv_mdiv_en
-addSignal -h 15 -holdScope loada
-addSignal -h 15 -holdScope loadp
-addSignal -h 15 -holdScope loadb
-addSignal -h 15 -holdScope outx1
-addSignal -h 15 -holdScope outx2
-addSignal -h 15 -holdScope minv_mdiv_rdy
-addSignal -h 15 -holdScope minv_mdiv_flag
-addSignal -h 15 -holdScope regx1out[15:0]
-addSignal -h 15 -holdScope regx2out[15:0]
-addSignal -h 15 -holdScope minv_mdiv
+activeDirFile "" "/home/xuhao/moddiv/mochu_moni_32/rtl.fsdb"
+addSignal -h 15 /MINV_MDIV_tb/MINV_MDIV/COUNTER/count[2:0]
 addGroup "G2"
-addSignal -h 15 /MINV_MDIV_tb/MINV_MDIV/MINV_MDIV_DATAPATH/regu/regout[255:0]
-addSignal -h 15 /MINV_MDIV_tb/MINV_MDIV/MINV_MDIV_DATAPATH/regv/regout[255:0]
-addGroup "G3"
-aliasname MINV_MDIV_CONTROL.cur_state
-addSignal -h 15 -UNSIGNED -HEX /MINV_MDIV_tb/MINV_MDIV/MINV_MDIV_CONTROL/cur_state[3:0]
-aliasname MINV_MDIV_CONTROL.cur_state
-addSignal -h 15 -UNSIGNED -HEX -holdScope nxt_state[3:0]
-addGroup "G4"
-addSignal -h 15 /MINV_MDIV_tb/MINV_MDIV/MINV_MDIV_CONTROL/u[255:0]
-addSignal -h 15 -holdScope regvout[255:0]
-addSignal -h 15 -holdScope u[0]
-addSignal -h 15 -holdScope regvout[0]
-addGroup "G5"
-addSignal -h 15 /MINV_MDIV_tb/MINV_MDIV/MINV_MDIV_DATAPATH/add_16/a[15:0]
-addSignal -h 15 -holdScope b[15:0]
-addSignal -h 15 -holdScope sum[15:0]
-addSignal -h 15 /MINV_MDIV_tb/MINV_MDIV/MINV_MDIV_CONTROL/count[3:0]
-addSignal -h 15 -holdScope temp_sign
-addSignal -h 15 /MINV_MDIV_tb/MINV_MDIV/MINV_MDIV_DATAPATH/add_sub
-addGroup "G6"
 
 ; getSignalForm Scope Hierarchy Status
 ; active file of getSignalForm

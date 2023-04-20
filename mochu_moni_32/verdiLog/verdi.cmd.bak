@@ -1,3 +1,255 @@
 debImport "-f" "./file.f"
+debLoadSimResult /home/xuhao/moddiv/mochu_moni_32/rtl.fsdb
 wvCreateWindow
-wvOpenFile -win $_nWave2 {/home/xuhao/moddiv/mochu_moni_32/rtl.fsdb}
+srcDeselectAll -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.COUNTER" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV.COUNTER" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.COUNTER" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.MINV_MDIV_DATAPATH" -win $_nTrace1
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.COUNTER" -win $_nTrace1
+srcSetScope -win $_nTrace1 "MINV_MDIV_tb.MINV_MDIV.COUNTER" -delim "."
+srcHBSelect "MINV_MDIV_tb.MINV_MDIV.COUNTER" -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcSelect -signal "count" -line 5 -pos 1 -win $_nTrace1
+srcAddSelectedToWave -clipboard -win $_nTrace1
+wvDrop -win $_nWave2
+wvZoom -win $_nWave2 20528.004854 34222.526214
+wvZoom -win $_nWave2 25239.290168 27753.902575
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+srcDeselectAll -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+wvZoom -win $_nWave2 586632.514563 650283.106796
+wvZoom -win $_nWave2 636660.966542 649450.194867
+srcDeselectAll -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+verdiDockWidgetMaximize -dock widgetDock_MTB_SOURCE_TAB_1
+verdiDockWidgetRestore -dock widgetDock_MTB_SOURCE_TAB_1
+srcDeselectAll -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+srcDeselectAll -win $_nTrace1
+debReload
+wvSelectSignal -win $_nWave2 {( "G1" 1 )} 
+wvSelectSignal -win $_nWave2 {( "G1" 1 )} 
+wvSelectGroup -win $_nWave2 {G2}
+wvSelectSignal -win $_nWave2 {( "G1" 1 )} 
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvSelectSignal -win $_nWave2 {( "G1" 1 )} 
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvSelectGroup -win $_nWave2 {G2}
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvSetPosition -win $_nWave2 {("G2" 0)}
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+wvPanUp -win $_nWave2
+debExit

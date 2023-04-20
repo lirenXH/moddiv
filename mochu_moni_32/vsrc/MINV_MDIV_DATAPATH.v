@@ -6,7 +6,8 @@ module  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_flag,minv_rdy,
                       regt_cyc,regt_rs,mux0_sel,mux1_sel,add_sub,carry_sel,mux3_sel,
                       u_flag_set,minv_flag_we,minv_en,set_minv_rdy,cur_state,regx1_h2b_we,
                       regx2_h2b_we,regu_h2b_we,regt_h2b_we,regx1_h2b_rs_en,
-                      regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en,minv_mdiv);
+                      regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en,minv_mdiv,
+                      has_done);
                       
   output [255:0] u,regvout;
   output [31:0] regx1out,regx2out;  
@@ -18,7 +19,8 @@ module  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_flag,minv_rdy,
          regx1_we,regx1_cyc,regx1_rs,regx2_we,regx2_cyc,regx2_rs,regt_we,regt_cyc,regt_rs,
          add_sub,carry_sel,mux3_sel,u_flag_set,minv_flag_we,set_minv_rdy,
          regx1_h2b_we,regx2_h2b_we,regu_h2b_we,regt_h2b_we,
-         regx1_h2b_rs_en,regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en,minv_mdiv;
+         regx1_h2b_rs_en,regx2_h2b_rs_en,regu_h2b_rs_en,regt_h2b_rs_en,minv_mdiv,
+         has_done;
          
   input [2:0] mux0_sel,mux1_sel;
   input [3:0] cur_state;   
@@ -61,7 +63,7 @@ module  MINV_MDIV_DATAPATH(u,regvout,regx1out,regx2out,minv_flag,minv_rdy,
                                       
   U_FLA_REG  U_FLA_REG(u_flag,clk,minv_en,u_flag_set);
   MINV_FLA_REG_modify  MINV_FLA_REG_modify(minv_flag,clk,minv_flag_in,minv_flag_we,rst);
-  RDY_FLA_REG  RDY_FLA_REG(minv_rdy,clk,minv_en,set_minv_rdy);
+  RDY_FLA_REG  RDY_FLA_REG(minv_rdy,clk,minv_en,set_minv_rdy,has_done);
   
   assign regx1_h2b_in=add_sub?x1_sub_x2_h2b:x1_add_p_h2b;
   assign x1_sub_x2_h2b=regx1_h2b_out+{~regx2_h2b_out[1],~regx2_h2b_out[0]}+c_out;

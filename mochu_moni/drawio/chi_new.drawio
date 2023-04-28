@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="lL9a2N68W7SlsQVTANbN" name="第 1 页">
-        <mxGraphModel dx="4598" dy="2280" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4000" pageHeight="4000" background="#FFFFFF" math="0" shadow="0">
+        <mxGraphModel dx="1009" dy="912" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4000" pageHeight="4000" background="#FFFFFF" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -10,7 +10,7 @@
                 <mxCell id="3" value="chi_master" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
                     <mxGeometry x="1941" y="1752" width="120" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="xbar_4" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
+                <mxCell id="4" value="xbar_2" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
                     <mxGeometry x="1971" y="1897" width="380" height="200" as="geometry"/>
                 </mxCell>
                 <mxCell id="5" value="Icache" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
@@ -73,7 +73,7 @@
                 <mxCell id="24" value="chi2flit" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
                     <mxGeometry x="2101" y="2057" width="120" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="26" value="xbar_2" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
+                <mxCell id="26" value="xbar_3" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
                     <mxGeometry x="1646" y="2272" width="380" height="200" as="geometry"/>
                 </mxCell>
                 <mxCell id="27" value="chi_slave" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
@@ -357,7 +357,7 @@
                 <mxCell id="100" value="valid-ready" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontFamily=Helvetica;fontColor=default;" parent="1" vertex="1">
                     <mxGeometry x="1796" y="2582" width="80" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="101" value="xbar_3" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
+                <mxCell id="101" value="xbar_4" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">
                     <mxGeometry x="1171" y="2802" width="380" height="200" as="geometry"/>
                 </mxCell>
                 <mxCell id="102" value="chi_slave" style="whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;" parent="1" vertex="1">

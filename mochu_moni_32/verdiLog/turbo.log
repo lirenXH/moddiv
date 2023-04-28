@@ -1,2 +1,0 @@
-Command Line: /usr/synopsys/verdi/Verdi_O-2018.09-SP2/platform/LINUXAMD64/bin/Novas -ssf rtl.fsdb -f ./file.f
-uname(Linux ubuntu 5.15.0-69-generic #76-Ubuntu SMP Fri Mar 17 17:19:29 UTC 2023 x86_64)

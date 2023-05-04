@@ -245,6 +245,8 @@ module tb_top();
     $value$plusargs("DUMPWAVE=%d",dumpwave);
     if(dumpwave != 0)begin
          // To add your waveform generation function
+	 $fsdbDumpfile("simv.fsdb");
+	 $fsdbDumpvars("+all");
     end
   end
 

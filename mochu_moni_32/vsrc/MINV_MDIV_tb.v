@@ -1,12 +1,12 @@
 `timescale 1ns / 1ns
 module  MINV_MDIV_tb;
   wire [31:0] result_out;  
-  wire minv_mdiv_rdy,minv_mdiv_flag;  
+  wire minv_mdiv_rdy;  
   reg [31:0] datain;
   reg  clk,rst,minv_mdiv_en,loada,loadp,out_ready,loadb,minv_mdiv;
   reg [255:0] a,b,p;
   reg [8:0] counter;
-  MINV_MDIV  MINV_MDIV(result_out,minv_mdiv_rdy,minv_mdiv_flag,
+  MINV_MDIV  MINV_MDIV(result_out,minv_mdiv_rdy,
                        datain,clk,rst,minv_mdiv,minv_mdiv_en,loada,loadb,loadp,out_ready,out_valid);
   //clock generation				   
   initial clk = 1;

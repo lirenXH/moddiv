@@ -1,7 +1,7 @@
 SIM_DIR     := ${PWD}
 RUN_DIR      := ${PWD}/run
 
-TESTNAME     := rv32ui-p-add 
+TESTNAME     := rv32ui-p-lh 
 TESTCASE     := ${RUN_DIR}/../../riscv-tools/riscv-tests/isa/generated/${TESTNAME}
 
 SIM          := iverilog 

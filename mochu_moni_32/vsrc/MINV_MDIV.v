@@ -11,11 +11,11 @@
 //minv_mdiv=1'b1 represent modular inverse operation,
 //minv_mdiv=1'b0 represent modular division operation.
 //modified in 2016.11.27
-module  MINV_MDIV(result_out,minv_mdiv_rdy,minv_mdiv_flag,
+module  MINV_MDIV(result_out,minv_mdiv_rdy,
                   datain,clk,rst,minv_mdiv,minv_mdiv_en,loada,loadb,loadp,out_ready,out_valid);
   
 	output [31:0] result_out;
-  output minv_mdiv_rdy,minv_mdiv_flag,out_valid;  
+  output minv_mdiv_rdy,out_valid;  
   input [31:0] datain;
   input  clk,rst,minv_mdiv_en,loada,loadp,out_ready,loadb,minv_mdiv;
   

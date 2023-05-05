@@ -121,7 +121,8 @@ compile.flg: ${RTL_V_FILES} ${TB_V_FILES}
 
 compile: compile.flg 
 
-wave: 
+wave:	
+	rm -rf nov*	
 	gvim -p ${TESTCASE}.spike.log ${TESTCASE}.dump &
 	${WAV_TOOL} ${WAV_OPTIONS} ${WAV_INC} ${WAV_RTL} ${WAV_FILE}  & 
 

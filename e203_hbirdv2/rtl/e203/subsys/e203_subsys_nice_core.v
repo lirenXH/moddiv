@@ -1,22 +1,6 @@
-/*                                                                      
- Copyright 2018-2020 Nuclei System Technology, Inc.                
-                                                                         
- Licensed under the Apache License, Version 2.0 (the "License");         
- you may not use this file except in compliance with the License.        
- You may obtain a copy of the License at                                 
-                                                                         
-     http://www.apache.org/licenses/LICENSE-2.0                          
-                                                                         
-  Unless required by applicable law or agreed to in writing, software    
- distributed under the License is distributed on an "AS IS" BASIS,       
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and     
- limitations under the License.                                          
- */
-
 //=====================================================================
 //
-// Designer   : LZB
+// Designer   : XH
 //
 // Description:
 //  The Module to realize a simple NICE core
@@ -60,11 +44,23 @@ module e203_subsys_nice_core (
 );
 
    localparam ROWBUF_DP = 4;
-   localparam ROWBUF_IDX_W = 2;
-   localparam ROW_IDX_W = 2;
+   localparam COUNTER_W = 3;
+   localparam ROW_IDX_W = 3;
    localparam COL_IDX_W = 4;
    localparam PIPE_NUM = 3;
 
+   wire [31:0] aregfile_r     [7:0];
+   wire [31:0] aregfile_wdat  [7:0];
+   wire [7:0] aregfile_we ;
+   wire [31:0] pregfile_r     [7:0];
+   wire [31:0] pregfile_wdat  [7:0];
+   wire [7:0] pregfile_we;
+   wire [31:0] bregfile_r     [7:0];
+   wire [31:0] bregfile_wdat  [7:0];
+   wire [7:0] bregfile_we;
+   wire [31:0] resregfile_r   [7:0];
+   wire [31:0] resregfile_wdat[7:0];
+   wire [7:0] resregfile_we ;
 
 // here we only use custom3: 
 // CUSTOM0 = 7'h0b, R type
@@ -116,13 +112,13 @@ module e203_subsys_nice_core (
    wire rv32_func7_0000101 = (rv32_func7 == 7'b0000101); 
    wire rv32_func7_0000110 = (rv32_func7 == 7'b0000110); 
    wire rv32_func7_0000111 = (rv32_func7 == 7'b0000111); 
-
+   wire rv32_func7_0001000 = (rv32_func7 == 7'b0001000); 
    ////////////////////////////////////////////////////////////
    // custom3:
    // Supported format: only R type here
    // Supported instr:
-   //  1. custom3 lbuf: load data(in memory) to row_buf
-   //     lbuf (a1)
+   //  1. custom3 labuf: load data(in memory) to row_buf
+   //     labuf (a1)
    //     .insn r opcode, func3, func7, rd, rs1, rs2    
    //  2. custom3 sbuf: store data(in row_buf) to memory
    //     sbuf (a1)
@@ -131,32 +127,39 @@ module e203_subsys_nice_core (
    //     rowsum rd, a1, x0
    //     .insn r opcode, func3, func7, rd, rs1, rs2    
    ////////////////////////////////////////////////////////////
-   wire custom3_lbuf     = opcode_custom3 & rv32_func3_010 & rv32_func7_0000001; 
-   wire custom3_sbuf     = opcode_custom3 & rv32_func3_010 & rv32_func7_0000010; 
-   wire custom3_rowsum   = opcode_custom3 & rv32_func3_110 & rv32_func7_0000110; 
-
+   wire custom3_labuf_div     = opcode_custom3 & rv32_func3_010 & rv32_func7_0000001;
+   wire custom3_labuf_inv     = opcode_custom3 & rv32_func3_010 & rv32_func7_0001000;
+   wire custom3_lbbuf         = opcode_custom3 & rv32_func3_010 & rv32_func7_0000010;
+   wire custom3_lpbuf         = opcode_custom3 & rv32_func3_010 & rv32_func7_0000011;   
+   wire custom3_sbuf          = opcode_custom3 & rv32_func3_010 & rv32_func7_0000100; 
+   wire custom3_stawork       = opcode_custom3 & rv32_func3_000 & rv32_func7_0000101; 
+   wire custom3_labuf         = custom3_labuf_inv || custom3_labuf_div;
    ////////////////////////////////////////////////////////////
    //  multi-cyc op 
    ////////////////////////////////////////////////////////////
-   wire custom_multi_cyc_op = custom3_lbuf | custom3_sbuf | custom3_rowsum;
+   wire custom_multi_cyc_op = custom3_labuf | custom3_lbbuf | custom3_lpbuf | custom3_sbuf | custom3_stawork;
    // need access memory
-   wire custom_mem_op = custom3_lbuf | custom3_sbuf | custom3_rowsum;
+   wire custom_mem_op = custom3_labuf | custom3_lbbuf | custom3_lpbuf | custom3_sbuf;
  
    ////////////////////////////////////////////////////////////
    // NICE FSM 
    ////////////////////////////////////////////////////////////
-   parameter NICE_FSM_WIDTH = 2; 
-   parameter IDLE     = 2'd0; 
-   parameter LBUF     = 2'd1; 
-   parameter SBUF     = 2'd2; 
-   parameter ROWSUM   = 2'd3; 
+   parameter NICE_FSM_WIDTH = 3; 
+   parameter IDLE     = 3'd0; 
+   parameter LABUF    = 3'd1;
+   parameter LBBUF    = 3'd2;
+   parameter LPBUF    = 3'd3;
+   parameter SBUF     = 3'd4; 
+   parameter WORK     = 3'd5; 
 
    wire [NICE_FSM_WIDTH-1:0] state_r; 
    wire [NICE_FSM_WIDTH-1:0] nxt_state; 
    wire [NICE_FSM_WIDTH-1:0] state_idle_nxt; 
-   wire [NICE_FSM_WIDTH-1:0] state_lbuf_nxt; 
+   wire [NICE_FSM_WIDTH-1:0] state_labuf_nxt;
+   wire [NICE_FSM_WIDTH-1:0] state_lbbuf_nxt;
+   wire [NICE_FSM_WIDTH-1:0] state_lpbuf_nxt;
    wire [NICE_FSM_WIDTH-1:0] state_sbuf_nxt; 
-   wire [NICE_FSM_WIDTH-1:0] state_rowsum_nxt; 
+   wire [NICE_FSM_WIDTH-1:0] state_work_nxt; 
 
    wire nice_req_hsked;
    wire nice_rsp_hsked;
@@ -164,83 +167,162 @@ module e203_subsys_nice_core (
    wire illgel_instr = ~(custom_multi_cyc_op);
 
    wire state_idle_exit_ena; 
-   wire state_lbuf_exit_ena; 
+   wire state_labuf_exit_ena; 
+   wire state_lbbuf_exit_ena; 
+   wire state_lpbuf_exit_ena; 
    wire state_sbuf_exit_ena; 
-   wire state_rowsum_exit_ena; 
+   wire state_work_exit_ena; 
    wire state_ena; 
 
    wire state_is_idle     = (state_r == IDLE); 
-   wire state_is_lbuf     = (state_r == LBUF); 
+   wire state_is_labuf    = (state_r == LABUF);
+   wire state_is_lbbuf    = (state_r == LBBUF);
+   wire state_is_lpbuf    = (state_r == LPBUF);
    wire state_is_sbuf     = (state_r == SBUF); 
-   wire state_is_rowsum   = (state_r == ROWSUM); 
+   wire state_is_work     = (state_r == WORK); 
+
+
+  reg work_minv_mdiv;
+  always@(posedge custom_mem_op)begin
+    work_minv_mdiv <= (custom_mem_op == custom3_labuf_inv) ? 1'b1 : 1'b0;
+  end
 
    assign state_idle_exit_ena = state_is_idle & nice_req_hsked & ~illgel_instr; 
-   assign state_idle_nxt =  custom3_lbuf    ? LBUF   : 
-                            custom3_sbuf    ? SBUF   :
-                            custom3_rowsum  ? ROWSUM :
-			    IDLE;
+   assign state_idle_nxt = custom3_labuf    ? LABUF   : 
+                              custom3_lbbuf    ? LBBUF   :
+                                 custom3_lpbuf    ? LPBUF   : 
+                                    custom3_sbuf     ? SBUF    :
+                                      custom3_stawork   ? WORK    :
+                                        IDLE;
 
-   wire lbuf_icb_rsp_hsked_last; 
-   assign state_lbuf_exit_ena = state_is_lbuf & lbuf_icb_rsp_hsked_last; 
-   assign state_lbuf_nxt = IDLE;
+   wire labuf_icb_rsp_hsked_last; 
+   assign state_labuf_exit_ena = state_is_labuf & labuf_icb_rsp_hsked_last; 
+   assign state_labuf_nxt = IDLE;
+
+   wire lbbuf_icb_rsp_hsked_last; 
+   assign state_lbbuf_exit_ena = state_is_lbbuf & lbbuf_icb_rsp_hsked_last; 
+   assign state_lbbuf_nxt = IDLE;
+
+   wire lpbuf_icb_rsp_hsked_last; 
+   assign state_lpbuf_exit_ena = state_is_lpbuf & lpbuf_icb_rsp_hsked_last; 
+   assign state_lpbuf_nxt = IDLE;
 
    wire sbuf_icb_rsp_hsked_last; 
    assign state_sbuf_exit_ena = state_is_sbuf & sbuf_icb_rsp_hsked_last; 
    assign state_sbuf_nxt = IDLE;
 
-   wire rowsum_done; 
-   assign state_rowsum_exit_ena = state_is_rowsum & rowsum_done; 
-   assign state_rowsum_nxt = IDLE;
+   wire work_done; 
+   assign state_work_exit_ena = state_is_work & work_done; 
+   assign state_work_nxt = IDLE;
 
    assign nxt_state =   ({NICE_FSM_WIDTH{state_idle_exit_ena   }} & state_idle_nxt   )
-                      | ({NICE_FSM_WIDTH{state_lbuf_exit_ena   }} & state_lbuf_nxt   ) 
+                      | ({NICE_FSM_WIDTH{state_labuf_exit_ena  }} & state_labuf_nxt  )
+                      | ({NICE_FSM_WIDTH{state_lbbuf_exit_ena  }} & state_lbbuf_nxt  )
+                      | ({NICE_FSM_WIDTH{state_lpbuf_exit_ena  }} & state_lpbuf_nxt  ) 
                       | ({NICE_FSM_WIDTH{state_sbuf_exit_ena   }} & state_sbuf_nxt   ) 
-                      | ({NICE_FSM_WIDTH{state_rowsum_exit_ena }} & state_rowsum_nxt ) 
+                      | ({NICE_FSM_WIDTH{state_work_exit_ena   }} & state_work_nxt   ) 
                       ;
 
-   assign state_ena =   state_idle_exit_ena | state_lbuf_exit_ena 
-                      | state_sbuf_exit_ena | state_rowsum_exit_ena;
-
+   assign state_ena =   state_idle_exit_ena | state_labuf_exit_ena | state_lbbuf_exit_ena | state_lpbuf_exit_ena 
+                      | state_sbuf_exit_ena | state_work_exit_ena;
+//状态寄存器, 输出当前状态, 写使能位 状态退出使能;
    sirv_gnrl_dfflr #(NICE_FSM_WIDTH)   state_dfflr (state_ena, nxt_state, state_r, nice_clk, nice_rst_n);
 
    ////////////////////////////////////////////////////////////
-   // instr EXU
+   // 指令执行:
    ////////////////////////////////////////////////////////////
-   wire [ROW_IDX_W-1:0]  clonum = 2'b10;  // fixed clonum
+   wire [COUNTER_W-1:0]  clonum = 3'b111;  // fixed clonum 8 cycle load data
    //wire [COL_IDX_W-1:0]  rownum;
 
-   //////////// 1. custom3_lbuf
-   wire [ROWBUF_IDX_W-1:0] lbuf_cnt_r; 
-   wire [ROWBUF_IDX_W-1:0] lbuf_cnt_nxt; 
-   wire lbuf_cnt_clr;
-   wire lbuf_cnt_incr;
-   wire lbuf_cnt_ena;
-   wire lbuf_cnt_last;
-   wire lbuf_icb_rsp_hsked;
-   wire nice_rsp_valid_lbuf;
-   wire nice_icb_cmd_valid_lbuf;
+   //////////// 1. custom3_labuf
+   wire [COUNTER_W-1:0] labuf_cnt_r; 
+   wire [COUNTER_W-1:0] labuf_cnt_nxt; 
+   wire labuf_cnt_clr;
+   wire labuf_cnt_incr;
+   wire labuf_cnt_ena;
+   wire labuf_cnt_last;
+   wire labuf_icb_rsp_hsked;
+   wire nice_rsp_valid_labuf;
+   wire nice_icb_cmd_valid_labuf;
 
-   assign lbuf_icb_rsp_hsked = state_is_lbuf & nice_icb_rsp_hsked;
-   assign lbuf_icb_rsp_hsked_last = lbuf_icb_rsp_hsked & lbuf_cnt_last;
-   assign lbuf_cnt_last = (lbuf_cnt_r == clonum);
-   assign lbuf_cnt_clr = custom3_lbuf & nice_req_hsked;
-   assign lbuf_cnt_incr = lbuf_icb_rsp_hsked & ~lbuf_cnt_last;
-   assign lbuf_cnt_ena = lbuf_cnt_clr | lbuf_cnt_incr;
-   assign lbuf_cnt_nxt =   ({ROWBUF_IDX_W{lbuf_cnt_clr }} & {ROWBUF_IDX_W{1'b0}})
-                         | ({ROWBUF_IDX_W{lbuf_cnt_incr}} & (lbuf_cnt_r + 1'b1) )
+   assign labuf_icb_rsp_hsked = state_is_labuf & nice_icb_rsp_hsked;
+   assign labuf_icb_rsp_hsked_last = labuf_icb_rsp_hsked & labuf_cnt_last;
+   assign labuf_cnt_last = (labuf_cnt_r == clonum);// 计数器最大计数的值为labuf所取32位数据的次数；
+   assign labuf_cnt_clr = custom3_labuf & nice_req_hsked;
+   assign labuf_cnt_incr = labuf_icb_rsp_hsked & ~labuf_cnt_last;
+   assign labuf_cnt_ena = labuf_cnt_clr | labuf_cnt_incr;
+   assign labuf_cnt_nxt =   ({COUNTER_W{labuf_cnt_clr }} & {COUNTER_W{1'b0}})
+                         | ({COUNTER_W{labuf_cnt_incr}} & (labuf_cnt_r + 1'b1) )
                          ;
 
-   sirv_gnrl_dfflr #(ROWBUF_IDX_W)   lbuf_cnt_dfflr (lbuf_cnt_ena, lbuf_cnt_nxt, lbuf_cnt_r, nice_clk, nice_rst_n);
+   sirv_gnrl_dfflr #(COUNTER_W)   labuf_cnt_dfflr (labuf_cnt_ena, labuf_cnt_nxt, labuf_cnt_r, nice_clk, nice_rst_n);
 
-   // nice_rsp_valid wait for nice_icb_rsp_valid in LBUF
-   assign nice_rsp_valid_lbuf = state_is_lbuf & lbuf_cnt_last & nice_icb_rsp_valid;
+   // nice_rsp_valid wait for nice_icb_rsp_valid in labuf
+   assign nice_rsp_valid_labuf = state_is_labuf & labuf_cnt_last & nice_icb_rsp_valid;
 
-   // nice_icb_cmd_valid sets when lbuf_cnt_r is not full in LBUF
-   assign nice_icb_cmd_valid_lbuf = (state_is_lbuf & (lbuf_cnt_r < clonum));
+   // nice_icb_cmd_valid sets when labuf_cnt_r is not full in labuf
+   assign nice_icb_cmd_valid_labuf = (state_is_labuf & (labuf_cnt_r < clonum));
 
-   //////////// 2. custom3_sbuf
-   wire [ROWBUF_IDX_W-1:0] sbuf_cnt_r; 
-   wire [ROWBUF_IDX_W-1:0] sbuf_cnt_nxt; 
+    //////////// 2. custom3_lbbuf
+   wire [COUNTER_W-1:0] lbbuf_cnt_r; 
+   wire [COUNTER_W-1:0] lbbuf_cnt_nxt; 
+   wire lbbuf_cnt_clr;
+   wire lbbuf_cnt_incr;
+   wire lbbuf_cnt_ena;
+   wire lbbuf_cnt_last;
+   wire lbbuf_icb_rsp_hsked;
+   wire nice_rsp_valid_lbbuf;
+   wire nice_icb_cmd_valid_lbbuf;
+
+   assign lbbuf_icb_rsp_hsked = state_is_lbbuf & nice_icb_rsp_hsked;
+   assign lbbuf_icb_rsp_hsked_last = lbbuf_icb_rsp_hsked & lbbuf_cnt_last;
+   assign lbbuf_cnt_last = (lbbuf_cnt_r == clonum);// 计数器最大计数的值为lbbuf所取32位数据的次数；
+   assign lbbuf_cnt_clr = custom3_lbbuf & nice_req_hsked;
+   assign lbbuf_cnt_incr = lbbuf_icb_rsp_hsked & ~lbbuf_cnt_last;
+   assign lbbuf_cnt_ena = lbbuf_cnt_clr | lbbuf_cnt_incr;
+   assign lbbuf_cnt_nxt =   ({COUNTER_W{lbbuf_cnt_clr }} & {COUNTER_W{1'b0}})
+                         | ({COUNTER_W{lbbuf_cnt_incr}} & (lbbuf_cnt_r + 1'b1) )
+                         ;
+
+   sirv_gnrl_dfflr #(COUNTER_W)   lbbuf_cnt_dfflr (lbbuf_cnt_ena, lbbuf_cnt_nxt, lbbuf_cnt_r, nice_clk, nice_rst_n);
+
+   // nice_rsp_valid wait for nice_icb_rsp_valid in lbbuf
+   assign nice_rsp_valid_lbbuf = state_is_lbbuf & lbbuf_cnt_last & nice_icb_rsp_valid;
+
+   // nice_icb_cmd_valid sets when lbbuf_cnt_r is not full in lbbuf
+   assign nice_icb_cmd_valid_lbbuf = (state_is_lbbuf & (lbbuf_cnt_r < clonum));
+
+    //////////// 3. custom3_lpbuf
+   wire [COUNTER_W-1:0] lpbuf_cnt_r; 
+   wire [COUNTER_W-1:0] lpbuf_cnt_nxt; 
+   wire lpbuf_cnt_clr;
+   wire lpbuf_cnt_incr;
+   wire lpbuf_cnt_ena;
+   wire lpbuf_cnt_last;
+   wire lpbuf_icb_rsp_hsked;
+   wire nice_rsp_valid_lpbuf;
+   wire nice_icb_cmd_valid_lpbuf;
+
+   assign lpbuf_icb_rsp_hsked = state_is_lpbuf & nice_icb_rsp_hsked;
+   assign lpbuf_icb_rsp_hsked_last = lpbuf_icb_rsp_hsked & lpbuf_cnt_last;
+   assign lpbuf_cnt_last = (lpbuf_cnt_r == clonum);// 计数器最大计数的值为lpbuf所取32位数据的次数；
+   assign lpbuf_cnt_clr = custom3_lpbuf & nice_req_hsked;
+   assign lpbuf_cnt_incr = lpbuf_icb_rsp_hsked & ~lpbuf_cnt_last;
+   assign lpbuf_cnt_ena = lpbuf_cnt_clr | lpbuf_cnt_incr;
+   assign lpbuf_cnt_nxt =   ({COUNTER_W{lpbuf_cnt_clr }} & {COUNTER_W{1'b0}})
+                         | ({COUNTER_W{lpbuf_cnt_incr}} & (lpbuf_cnt_r + 1'b1) )
+                         ;
+
+   sirv_gnrl_dfflr #(COUNTER_W)   lpbuf_cnt_dfflr (lpbuf_cnt_ena, lpbuf_cnt_nxt, lpbuf_cnt_r, nice_clk, nice_rst_n);
+
+   // nice_rsp_valid wait for nice_icb_rsp_valid in lpbuf
+   assign nice_rsp_valid_lpbuf = state_is_lpbuf & lpbuf_cnt_last & nice_icb_rsp_valid;
+
+   // nice_icb_cmd_valid sets when lpbuf_cnt_r is not full in lpbuf
+   assign nice_icb_cmd_valid_lpbuf = (state_is_lpbuf & (lpbuf_cnt_r < clonum));
+   //////////// 4. custom3_sbuf
+   wire [COUNTER_W-1:0] sbuf_cnt_r; 
+   wire [COUNTER_W-1:0] sbuf_cnt_nxt; 
    wire sbuf_cnt_clr;
    wire sbuf_cnt_incr;
    wire sbuf_cnt_ena;
@@ -259,17 +341,17 @@ module e203_subsys_nice_core (
    assign sbuf_cnt_clr = sbuf_icb_rsp_hsked_last;
    assign sbuf_cnt_incr = sbuf_icb_rsp_hsked & ~sbuf_cnt_last;
    assign sbuf_cnt_ena = sbuf_cnt_clr | sbuf_cnt_incr;
-   assign sbuf_cnt_nxt =   ({ROWBUF_IDX_W{sbuf_cnt_clr }} & {ROWBUF_IDX_W{1'b0}})
-                         | ({ROWBUF_IDX_W{sbuf_cnt_incr}} & (sbuf_cnt_r + 1'b1) )
+   assign sbuf_cnt_nxt =   ({COUNTER_W{sbuf_cnt_clr }} & {COUNTER_W{1'b0}})
+                         | ({COUNTER_W{sbuf_cnt_incr}} & (sbuf_cnt_r + 1'b1) )
                          ;
 
-   sirv_gnrl_dfflr #(ROWBUF_IDX_W)   sbuf_cnt_dfflr (sbuf_cnt_ena, sbuf_cnt_nxt, sbuf_cnt_r, nice_clk, nice_rst_n);
+   sirv_gnrl_dfflr #(COUNTER_W)   sbuf_cnt_dfflr (sbuf_cnt_ena, sbuf_cnt_nxt, sbuf_cnt_r, nice_clk, nice_rst_n);
 
    // nice_rsp_valid wait for nice_icb_rsp_valid in SBUF
    assign nice_rsp_valid_sbuf = state_is_sbuf & sbuf_cnt_last & nice_icb_rsp_valid;
 
-   wire [ROWBUF_IDX_W-1:0] sbuf_cmd_cnt_r; 
-   wire [ROWBUF_IDX_W-1:0] sbuf_cmd_cnt_nxt; 
+   wire [COUNTER_W-1:0] sbuf_cmd_cnt_r; 
+   wire [COUNTER_W-1:0] sbuf_cmd_cnt_nxt; 
    wire sbuf_cmd_cnt_clr;
    wire sbuf_cmd_cnt_incr;
    wire sbuf_cmd_cnt_ena;
@@ -279,220 +361,303 @@ module e203_subsys_nice_core (
    assign sbuf_cmd_cnt_clr = sbuf_icb_rsp_hsked_last;
    assign sbuf_cmd_cnt_incr = sbuf_icb_cmd_hsked & ~sbuf_cmd_cnt_last;
    assign sbuf_cmd_cnt_ena = sbuf_cmd_cnt_clr | sbuf_cmd_cnt_incr;
-   assign sbuf_cmd_cnt_nxt =   ({ROWBUF_IDX_W{sbuf_cmd_cnt_clr }} & {ROWBUF_IDX_W{1'b0}})
-                             | ({ROWBUF_IDX_W{sbuf_cmd_cnt_incr}} & (sbuf_cmd_cnt_r + 1'b1) )
+   assign sbuf_cmd_cnt_nxt =   ({COUNTER_W{sbuf_cmd_cnt_clr }} & {COUNTER_W{1'b0}})
+                             | ({COUNTER_W{sbuf_cmd_cnt_incr}} & (sbuf_cmd_cnt_r + 1'b1) )
                              ;
-   sirv_gnrl_dfflr #(ROWBUF_IDX_W)   sbuf_cmd_cnt_dfflr (sbuf_cmd_cnt_ena, sbuf_cmd_cnt_nxt, sbuf_cmd_cnt_r, nice_clk, nice_rst_n);
+   sirv_gnrl_dfflr #(COUNTER_W)   sbuf_cmd_cnt_dfflr (sbuf_cmd_cnt_ena, sbuf_cmd_cnt_nxt, sbuf_cmd_cnt_r, nice_clk, nice_rst_n);
 
    // nice_icb_cmd_valid sets when sbuf_cmd_cnt_r is not full in SBUF
    assign nice_icb_cmd_valid_sbuf = (state_is_sbuf & (sbuf_cmd_cnt_r <= clonum) & (sbuf_cnt_r != clonum));
 
 
-   //////////// 3. custom3_rowsum
-   // rowbuf counter 
-   wire [ROWBUF_IDX_W-1:0] rowbuf_cnt_r; 
-   wire [ROWBUF_IDX_W-1:0] rowbuf_cnt_nxt; 
-   wire rowbuf_cnt_clr;
-   wire rowbuf_cnt_incr;
-   wire rowbuf_cnt_ena;
-   wire rowbuf_cnt_last;
-   wire rowbuf_icb_rsp_hsked;
-   wire rowbuf_rsp_hsked;
-   wire nice_rsp_valid_rowsum;
+   //////////// 5. custom3_work
+   // regfile counter 
+   wire [COUNTER_W-1:0] regfile_cnt_r; 
+   wire [COUNTER_W-1:0] regfile_cnt_nxt; 
+   wire regfile_cnt_clr;
+   wire regfile_cnt_incr;
+   wire regfile_cnt_ena;
+   wire regfile_cnt_last;
+   wire regfile_icb_rsp_hsked;
+   wire regfile_rsp_hsked;
+   wire nice_rsp_valid_work;
 
-   assign rowbuf_rsp_hsked = nice_rsp_valid_rowsum & nice_rsp_ready;
-   assign rowbuf_icb_rsp_hsked = state_is_rowsum & nice_icb_rsp_hsked;
-   assign rowbuf_cnt_last = (rowbuf_cnt_r == clonum);
-   assign rowbuf_cnt_clr = rowbuf_icb_rsp_hsked & rowbuf_cnt_last;
-   assign rowbuf_cnt_incr = rowbuf_icb_rsp_hsked & ~rowbuf_cnt_last;
-   assign rowbuf_cnt_ena = rowbuf_cnt_clr | rowbuf_cnt_incr;
-   assign rowbuf_cnt_nxt =   ({ROWBUF_IDX_W{rowbuf_cnt_clr }} & {ROWBUF_IDX_W{1'b0}})
-                           | ({ROWBUF_IDX_W{rowbuf_cnt_incr}} & (rowbuf_cnt_r + 1'b1))
+   assign regfile_rsp_hsked = nice_rsp_valid_work & nice_rsp_ready;
+   assign regfile_icb_rsp_hsked = state_is_work & nice_icb_rsp_hsked;
+   assign regfile_cnt_last = (regfile_cnt_r == clonum);
+   assign regfile_cnt_clr = regfile_icb_rsp_hsked & regfile_cnt_last;
+   assign regfile_cnt_incr = regfile_icb_rsp_hsked & ~regfile_cnt_last;
+   assign regfile_cnt_ena = regfile_cnt_clr | regfile_cnt_incr;
+   assign regfile_cnt_nxt =   ({COUNTER_W{regfile_cnt_clr }} & {COUNTER_W{1'b0}})
+                           | ({COUNTER_W{regfile_cnt_incr}} & (regfile_cnt_r + 1'b1))
                            ;
-   //assign nice_icb_cmd_valid_rowbuf =   (state_is_idle & custom3_rowsum)
-   //                                  | (state_is_rowsum & (rowbuf_cnt_r <= clonum) & (clonum != 0))
+   //assign nice_icb_cmd_valid_regfile =   (state_is_idle & custom3_work)
+   //                                  | (state_is_work & (regfile_cnt_r <= clonum) & (clonum != 0))
    //                                  ;
 
-   sirv_gnrl_dfflr #(ROWBUF_IDX_W)   rowbuf_cnt_dfflr (rowbuf_cnt_ena, rowbuf_cnt_nxt, rowbuf_cnt_r, nice_clk, nice_rst_n);
+   sirv_gnrl_dfflr #(COUNTER_W)   regfile_cnt_dfflr (regfile_cnt_ena, regfile_cnt_nxt, regfile_cnt_r, nice_clk, nice_rst_n);
 
-   // recieve data buffer, to make sure rowsum ops come from registers 
-   wire rcv_data_buf_ena;
+   // recieve data buffer, to make sure work ops come from registers 
+   wire rcv_data_buf_ena;//ddf寄存器的写使能
    wire rcv_data_buf_set;
    wire rcv_data_buf_clr;
    wire rcv_data_buf_valid;
    wire [`E203_XLEN-1:0] rcv_data_buf; 
-   wire [ROWBUF_IDX_W-1:0] rcv_data_buf_idx; 
-   wire [ROWBUF_IDX_W-1:0] rcv_data_buf_idx_nxt; 
+   wire [COUNTER_W-1:0] rcv_data_buf_idx; //接收计算后数据 用idx标识
+   wire [COUNTER_W-1:0] rcv_data_buf_idx_nxt; 
 
-   assign rcv_data_buf_set = rowbuf_icb_rsp_hsked;
-   assign rcv_data_buf_clr = rowbuf_rsp_hsked;
+   assign rcv_data_buf_set = regfile_icb_rsp_hsked;
+   assign rcv_data_buf_clr = regfile_rsp_hsked;
    assign rcv_data_buf_ena = rcv_data_buf_clr | rcv_data_buf_set;
-   assign rcv_data_buf_idx_nxt =   ({ROWBUF_IDX_W{rcv_data_buf_clr}} & {ROWBUF_IDX_W{1'b0}})
-                                 | ({ROWBUF_IDX_W{rcv_data_buf_set}} & rowbuf_cnt_r        );
+   assign rcv_data_buf_idx_nxt =   ({COUNTER_W{rcv_data_buf_clr}} & {COUNTER_W{1'b0}})
+                                 | ({COUNTER_W{rcv_data_buf_set}} & regfile_cnt_r        );
 
    sirv_gnrl_dfflr #(1)   rcv_data_buf_valid_dfflr (1'b1, rcv_data_buf_ena, rcv_data_buf_valid, nice_clk, nice_rst_n);
    sirv_gnrl_dfflr #(`E203_XLEN)   rcv_data_buf_dfflr (rcv_data_buf_ena, nice_icb_rsp_rdata, rcv_data_buf, nice_clk, nice_rst_n);
-   sirv_gnrl_dfflr #(ROWBUF_IDX_W)   rowbuf_cnt_d_dfflr (rcv_data_buf_ena, rcv_data_buf_idx_nxt, rcv_data_buf_idx, nice_clk, nice_rst_n);
+   sirv_gnrl_dfflr #(COUNTER_W)   rowbuf_cnt_d_dfflr (rcv_data_buf_ena, rcv_data_buf_idx_nxt, rcv_data_buf_idx, nice_clk, nice_rst_n);
 
-   // rowsum accumulator 
-   wire [`E203_XLEN-1:0] rowsum_acc_r;
-   wire [`E203_XLEN-1:0] rowsum_acc_nxt;
-   wire [`E203_XLEN-1:0] rowsum_acc_adder;
-   wire rowsum_acc_ena;
-   wire rowsum_acc_set;
-   wire rowsum_acc_flg;
-   wire nice_icb_cmd_valid_rowsum;
-   wire [`E203_XLEN-1:0] rowsum_res;
 
-   assign rowsum_acc_set = rcv_data_buf_valid & (rcv_data_buf_idx == {ROWBUF_IDX_W{1'b0}});
-   assign rowsum_acc_flg = rcv_data_buf_valid & (rcv_data_buf_idx != {ROWBUF_IDX_W{1'b0}});
-   assign rowsum_acc_adder = rcv_data_buf + rowsum_acc_r;
-   assign rowsum_acc_ena = rowsum_acc_set | rowsum_acc_flg;
-   assign rowsum_acc_nxt =   ({`E203_XLEN{rowsum_acc_set}} & rcv_data_buf)
-                           | ({`E203_XLEN{rowsum_acc_flg}} & rowsum_acc_adder)
-                           ;
- 
-   sirv_gnrl_dfflr #(`E203_XLEN)   rowsum_acc_dfflr (rowsum_acc_ena, rowsum_acc_nxt, rowsum_acc_r, nice_clk, nice_rst_n);
-
-   assign rowsum_done = state_is_rowsum & nice_rsp_hsked;
-   assign rowsum_res  = rowsum_acc_r;
-
-   // rowsum finishes when the last acc data is added to rowsum_acc_r  
-   assign nice_rsp_valid_rowsum = state_is_rowsum & (rcv_data_buf_idx == clonum) & ~rowsum_acc_flg;
-
-   // nice_icb_cmd_valid sets when rcv_data_buf_idx is not full in LBUF
-   assign nice_icb_cmd_valid_rowsum = state_is_rowsum & (rcv_data_buf_idx < clonum) & ~rowsum_acc_flg;
-
-   //////////// rowbuf
-   // rowbuf access list:
-   //  1. lbuf will write to rowbuf, write data comes from memory, data length is defined by clonum 
-   //  2. sbuf will read from rowbuf, and store it to memory, data length is defined by clonum 
-   //  3. rowsum will accumulate data, and store to rowbuf, data length is defined by clonum 
-   wire [`E203_XLEN-1:0] rowbuf_r [ROWBUF_DP-1:0];
-   wire [`E203_XLEN-1:0] rowbuf_wdat [ROWBUF_DP-1:0];
-   wire [ROWBUF_DP-1:0]  rowbuf_we;
-   wire [ROWBUF_IDX_W-1:0] rowbuf_idx_mux; 
-   wire [`E203_XLEN-1:0] rowbuf_wdat_mux; 
-   wire rowbuf_wr_mux; 
-   //wire [ROWBUF_IDX_W-1:0] sbuf_idx; 
+//----------------------------------
    
-   // lbuf write to rowbuf
-   wire [ROWBUF_IDX_W-1:0] lbuf_idx = lbuf_cnt_r; 
-   wire lbuf_wr = lbuf_icb_rsp_hsked; 
-   wire [`E203_XLEN-1:0] lbuf_wdata = nice_icb_rsp_rdata;
+   wire [31:0] divout; //此处直接输出32bit 
+   wire load_a,load_b,load_p,minvdiv_en,kong;
+   wire [31:0] work_div;
 
-   // rowsum write to rowbuf(column accumulated data)
-   wire [ROWBUF_IDX_W-1:0] rowsum_idx = rcv_data_buf_idx; 
-   wire rowsum_wr = rcv_data_buf_valid; 
-   wire [`E203_XLEN-1:0] rowsum_wdata = rowbuf_r[rowsum_idx] + rcv_data_buf;
+   wire[31:0] work_in_mux;
+   wire complete ;
+   //直接输入256   没什么用 还是一个周期32bit 要8个周期
+   assign work_in_mux = ({256{load_a}} & {{aregfile_r[7]},{aregfile_r[6]},{aregfile_r[5]},{aregfile_r[4]},
+			                		{aregfile_r[3]},{aregfile_r[2]},{aregfile_r[1]},{aregfile_r[0]} } )
+                      | ({256{load_b}} & {{bregfile_r[7]},{bregfile_r[6]},{bregfile_r[5]},{bregfile_r[4]},
+			                		{bregfile_r[3]},{bregfile_r[2]},{bregfile_r[1]},{bregfile_r[0]} } )
+			                | ({256{load_p}} & {{pregfile_r[7]},{pregfile_r[6]},{pregfile_r[5]},{pregfile_r[4]},
+			                		{pregfile_r[3]},{pregfile_r[2]},{pregfile_r[1]},{pregfile_r[0]} } );
 
-   // rowbuf write mux
-   assign rowbuf_wdat_mux =   ({`E203_XLEN{lbuf_wr  }} & lbuf_wdata  )
-                            | ({`E203_XLEN{rowsum_wr}} & rowsum_wdata)
-                            ;
-   assign rowbuf_wr_mux   =  lbuf_wr | rowsum_wr;
-   assign rowbuf_idx_mux  =   ({ROWBUF_IDX_W{lbuf_wr  }} & lbuf_idx  )
-                            | ({ROWBUF_IDX_W{rowsum_wr}} & rowsum_idx)
-                            ;  
+   wire[2:0] work_cnt_r;
+   wire[2:0] work_cnt_nxt;
+   wire[1:0] work_cnt_incount;
+   wire work_cnt_incr;
+   wire work_cnt_ena ;
+   wire work_cnt_clr;
+   wire[2:0] work_cnt_last = 3'b100;
+  
+  //work下自动自增 
+   assign work_cnt_clr = (work_cnt_r == work_cnt_last);
+   assign work_cnt_incr = (work_cnt_r != work_cnt_last);
+   assign work_cnt_incount = (load_p && work_minv_mdiv) ? 2'd2 : 2'd1;
+   assign work_cnt_ena     = state_is_work & (work_cnt_incr);
+   assign work_cnt_nxt     = ({3{work_cnt_clr}} & {3{1'b0}})
+                           | ({3{work_cnt_incr}} & (work_cnt_r + work_cnt_incount));
 
-   // rowbuf inst
+   sirv_gnrl_dfflr #(3)   work_cnt_dfflr (work_cnt_ena, work_cnt_nxt, work_cnt_r, nice_clk, nice_rst_n);
+
+   assign load_a     = (state_is_work & (work_cnt_r == 3'd0));
+   assign load_p     = (state_is_work & (work_cnt_r == 3'd1));
+   assign load_b     = (state_is_work & (work_cnt_r == 3'd2));
+   assign minvdiv_en = (state_is_work & (work_cnt_r == 3'd3));
+   assign kong       = (state_is_work & (work_cnt_r == 3'd4));
+  
+   MINV_MDIV  MINV_MDIV(
+  .clk          (nice_clk),
+  .rst          (!nice_rst_n),
+  .loada        (load_a),
+  .loadb        (load_b),
+  .loadp        (load_p),
+  .minv_mdiv_rdy(),             //output
+  .datain       (work_in_mux),
+  .minv_mdiv    (work_minv_mdiv),
+  .minv_mdiv_en (minvdiv_en),
+  .out_ready    (minvdiv_en),
+  .out_valid    (complete),
+  .result_out   (divout)
+  );
+
+   //sirv_gnrl_dfflr #(`E203_XLEN)   rowsum_acc_dfflr (rowsum_acc_ena, rowsum_acc_nxt, rowsum_acc_r, nice_clk, nice_rst_n);
+ // sirv_gnrl_dfflr #(128)   work_div_dfflr (complete, aesout , out, nice_clk, nice_rst_n);
+
+   assign work_done = state_is_work & complete;
+   assign work_div  = divout;
+
+   // 当nicecore完成计算，发出work_done rsp通道开始握手； 
+   assign nice_rsp_valid_work = state_is_work & work_done;
+
+//----------------------------------
+
+   //////////// key regfile
+
+   //  1. labuf & ldbuf 从内存中读取数据 数据的长度取决于 clonum
+   //  2. sbuf 将加解密好了的数据从 regfile 中取出来 存到内存中去； 
+   //  3. work 状态就是调用aes核，进行加解密；
+      //data regfile 除数a的寄存器堆
+
+   // labuf 状态写入寄存器堆
+   wire [COUNTER_W-1:0] labuf_idx = labuf_cnt_r; // labuf计数器的输出次数
+   wire labuf_wr = labuf_icb_rsp_hsked; //当存储器反馈通道 握手之后 给labuf 的读写是能
+   wire [31:0] labuf_wdata = nice_icb_rsp_rdata; //存储器反馈 读回的数据通过wdata-mux 选通
+
+   // lbbuf 状态写入寄存器堆
+   wire [COUNTER_W-1:0] lbbuf_idx = lbbuf_cnt_r; // lbbuf计数器的输出次数
+   wire lbbuf_wr = lbbuf_icb_rsp_hsked; //当存储器反馈通道 握手之后 给lbbuf 的读写是能
+   wire [31:0] lbbuf_wdata = nice_icb_rsp_rdata; //存储器反馈 读回的数据通过wdata-mux 选通
+
+   // lpbuf 状态写入寄存器堆
+   wire [COUNTER_W-1:0] lpbuf_idx = lpbuf_cnt_r; // lpbuf计数器的输出次数
+   wire lpbuf_wr = lpbuf_icb_rsp_hsked; //当存储器反馈通道 握手之后 给lpbuf 的读写是能
+   wire [31:0] lpbuf_wdata = nice_icb_rsp_rdata; //存储器反馈 读回的数据通过wdata-mux 选通
+
+   // nicecore 的运算结果 存入regfile中;
+   wire [3:0] work_idx = rcv_data_buf_idx; 
+   wire work_wr = rcv_data_buf_valid; //rcv_buf 的写使能寄存器的值，控制regfile的写MUX3——1
+
+ // 1.regfile实例化for a; 
    genvar i;
    generate 
-     for (i=0; i<ROWBUF_DP; i=i+1) begin:gen_rowbuf
-       assign rowbuf_we[i] =   (rowbuf_wr_mux & (rowbuf_idx_mux == i[ROWBUF_IDX_W-1:0]))
+     for (i=0; i<8; i=i+1) begin:gen_aregfile
+       assign aregfile_we[i] =   (labuf_wr & (labuf_idx == i[COUNTER_W-1:0]))
                              ;
   
-       assign rowbuf_wdat[i] =   ({`E203_XLEN{rowbuf_we[i]}} & rowbuf_wdat_mux   )
+       assign aregfile_wdat[i] =   ({`E203_XLEN{aregfile_we[i]}} & labuf_wdata   )
                                ;
   
-       sirv_gnrl_dfflr #(`E203_XLEN) rowbuf_dfflr (rowbuf_we[i], rowbuf_wdat[i], rowbuf_r[i], nice_clk, nice_rst_n);
+       sirv_gnrl_dfflr #(`E203_XLEN) aregfile_dfflr (aregfile_we[i], aregfile_wdat[i], aregfile_r[i], nice_clk, nice_rst_n);
+       //a 存入aregfile 输出为 aregfile_r；
      end
    endgenerate
 
-   //////////// mem aacess addr management
+   //2.data regfile 模数p的寄存器堆
+
+    // regfile实例化for p; 
+   genvar j;
+   generate 
+     for (j=0; j<8; j=j+1) begin:gen_pregfile
+       assign pregfile_we[j] =   (lpbuf_wr & (lpbuf_idx == j[COUNTER_W-1:0]))
+                             ;
+  
+       assign pregfile_wdat[j] =   ({`E203_XLEN{pregfile_we[j]}} & lpbuf_wdata   )
+                               ;
+  
+       sirv_gnrl_dfflr #(`E203_XLEN) pregfile_dfflr (pregfile_we[j], pregfile_wdat[j], pregfile_r[j], nice_clk, nice_rst_n);
+       //p 存入pregfile 输出为 pregfile_r；
+     end
+   endgenerate
+
+   //data regfile 模数b的寄存器堆
+
+    //3.regfile实例化for b; 
+   genvar k;
+   generate 
+     for (k=0; k<8; k=k+1) begin:gen_bregfile
+       assign bregfile_we[k] =   (lbbuf_wr & (lbbuf_idx == k[COUNTER_W-1:0]))
+                             ;
+  
+       assign bregfile_wdat[k] =   ({`E203_XLEN{bregfile_we[k]}} & lbbuf_wdata   )
+                               ;
+  
+       sirv_gnrl_dfflr #(`E203_XLEN) bregfile_dfflr (bregfile_we[k], bregfile_wdat[k], bregfile_r[k], nice_clk, nice_rst_n);
+       //b 存入bregfile 输出为 bregfile_r；
+     end
+   endgenerate
+
+  //4.results regfile
+
+   // regfile实例化 
+   genvar l;
+   generate 
+     for (l=0; l<8; l=l+1) begin:gen_resregfile
+       assign resregfile_we[l] =   (work_done);
+                             
+  
+       assign resregfile_wdat[l] =   ({`E203_XLEN{resregfile_we[l]}} & work_div   ) ;
+
+       sirv_gnrl_dfflr #(`E203_XLEN) resregfile_dfflr (resregfile_we[l], resregfile_wdat[l], resregfile_r[l], nice_clk, nice_rst_n);
+     end
+   endgenerate
+
+  //////////// 存储器请求访问地址生成
    wire [`E203_XLEN-1:0] maddr_acc_r; 
    assign nice_icb_cmd_hsked = nice_icb_cmd_valid & nice_icb_cmd_ready; 
-   // custom3_lbuf 
+
+   // labuf 的地址使能
    //wire [`E203_XLEN-1:0] lbuf_maddr    = state_is_idle ? nice_req_rs1 : maddr_acc_r ; 
-   wire lbuf_maddr_ena    =   (state_is_idle & custom3_lbuf & nice_icb_cmd_hsked)
-                            | (state_is_lbuf & nice_icb_cmd_hsked)
-                            ;
+   wire labuf_maddr_ena    =   (state_is_idle & custom3_labuf & nice_icb_cmd_hsked)
+                            | (state_is_labuf & nice_icb_cmd_hsked);
+				
+  
+   // lbbuf 的地址使能                          
+   wire lbbuf_maddr_ena    =   (state_is_idle & custom3_lbbuf & nice_icb_cmd_hsked)
+                            | (state_is_lbbuf & nice_icb_cmd_hsked);
+                            
 
-   // custom3_sbuf 
-   //wire [`E203_XLEN-1:0] sbuf_maddr    = state_is_idle ? nice_req_rs1 : maddr_acc_r ; 
+   // lpbuf 的地址使能                          
+   wire lpbuf_maddr_ena    =   (state_is_idle & custom3_lpbuf & nice_icb_cmd_hsked)
+                            | (state_is_lpbuf & nice_icb_cmd_hsked) ;
+                           
+   // custom3_sbuf  
    wire sbuf_maddr_ena    =   (state_is_idle & custom3_sbuf & nice_icb_cmd_hsked)
-                            | (state_is_sbuf & nice_icb_cmd_hsked)
-                            ;
+                            | (state_is_sbuf & nice_icb_cmd_hsked);
 
-   // custom3_rowsum
-   //wire [`E203_XLEN-1:0] rowsum_maddr  = state_is_idle ? nice_req_rs1 : maddr_acc_r ; 
-   wire rowsum_maddr_ena  =   (state_is_idle & custom3_rowsum & nice_icb_cmd_hsked)
-                            | (state_is_rowsum & nice_icb_cmd_hsked)
-                            ;
+   // 存储器请求通道的addr使能 决定了发送窗口和内容
+     wire  maddr_ena = labuf_maddr_ena | lbbuf_maddr_ena | lpbuf_maddr_ena | sbuf_maddr_ena;
+     wire  maddr_ena_idle = maddr_ena & state_is_idle; //地址的发送是在初始态中完成的；
 
-   // maddr acc 
-   //wire  maddr_incr = lbuf_maddr_ena | sbuf_maddr_ena | rowsum_maddr_ena | rbuf_maddr_ena;
-   wire  maddr_ena = lbuf_maddr_ena | sbuf_maddr_ena | rowsum_maddr_ena;
-   wire  maddr_ena_idle = maddr_ena & state_is_idle;
+     wire [`E203_XLEN-1:0] maddr_acc_op1 = maddr_ena_idle ? nice_req_rs1 : maddr_acc_r; // not reused
+     wire [`E203_XLEN-1:0] maddr_acc_op2 = maddr_ena_idle ? `E203_XLEN'h4 : `E203_XLEN'h4; 
 
-   wire [`E203_XLEN-1:0] maddr_acc_op1 = maddr_ena_idle ? nice_req_rs1 : maddr_acc_r; // not reused
-   wire [`E203_XLEN-1:0] maddr_acc_op2 = maddr_ena_idle ? `E203_XLEN'h4 : `E203_XLEN'h4; 
+     wire [`E203_XLEN-1:0] maddr_acc_next = maddr_acc_op1 + maddr_acc_op2;
+     wire  maddr_acc_ena = maddr_ena;
 
-   wire [`E203_XLEN-1:0] maddr_acc_next = maddr_acc_op1 + maddr_acc_op2;
-   wire  maddr_acc_ena = maddr_ena;
-
-   sirv_gnrl_dfflr #(`E203_XLEN)   maddr_acc_dfflr (maddr_acc_ena, maddr_acc_next, maddr_acc_r, nice_clk, nice_rst_n);
-
+     sirv_gnrl_dfflr #(`E203_XLEN)   maddr_acc_dfflr (maddr_acc_ena, maddr_acc_next, maddr_acc_r, nice_clk, nice_rst_n);
+     
    ////////////////////////////////////////////////////////////
-   // Control cmd_req
+   // 控制cmd_req 存储器请求通道 请求通道的握手是在idle状态开始的；
    ////////////////////////////////////////////////////////////
    assign nice_req_hsked = nice_req_valid & nice_req_ready;
-   assign nice_req_ready = state_is_idle & (custom_mem_op ? nice_icb_cmd_ready : 1'b1);
+   assign nice_req_ready = state_is_idle & (custom_mem_op ? nice_icb_cmd_ready : 1'b1); 
 
    ////////////////////////////////////////////////////////////
-   // Control cmd_rsp
+   // 控制icb_rsp 存储器反馈通道  莫名其妙 只返回了32bit?
    ////////////////////////////////////////////////////////////
    assign nice_rsp_hsked = nice_rsp_valid & nice_rsp_ready; 
    assign nice_icb_rsp_hsked = nice_icb_rsp_valid & nice_icb_rsp_ready;
-   assign nice_rsp_valid = nice_rsp_valid_rowsum | nice_rsp_valid_sbuf | nice_rsp_valid_lbuf;
-   assign nice_rsp_rdat  = {`E203_XLEN{state_is_rowsum}} & rowsum_res;
+   assign nice_rsp_valid =  nice_rsp_valid_sbuf | nice_rsp_valid_labuf | nice_rsp_valid_lbbuf| nice_rsp_valid_lpbuf | nice_rsp_valid_work;
+   assign nice_rsp_rdat  = {`E203_XLEN{state_is_work}} & work_div;
 
-   // memory access bus error
+   // 存储器请求error 在存储器rsp 出现错误后，随即通过nice反馈通道 反馈error （nice_rsp_err）
    //assign nice_rsp_err_irq  =   (nice_icb_rsp_hsked & nice_icb_rsp_err)
    //                          | (nice_req_hsked & illgel_instr)
    //                          ; 
    assign nice_rsp_err   =   (nice_icb_rsp_hsked & nice_icb_rsp_err);
 
    ////////////////////////////////////////////////////////////
-   // Memory lsu
+   // 存储器的lsu load store unit 通道信号
    ////////////////////////////////////////////////////////////
-   // memory access list:
-   //  1. In IDLE, custom_mem_op will access memory(lbuf/sbuf/rowsum)
-   //  2. In LBUF, it will read from memory as long as lbuf_cnt_r is not full
-   //  3. In SBUF, it will write to memory as long as sbuf_cnt_r is not full
-   //  3. In ROWSUM, it will read from memory as long as rowsum_cnt_r is not full
+   //  1. IDLE, 发送mem_holdup ，将存储器的独占信号拉高
+   //  2. LKBUF, LEDBUF 当lkbuf_cnt_r 计数器不满时从内存中读入数据；  
+   //  3. SBUF, 当sbuf_cnt_r 计数器不满时 不断从regfile中读出 并写入内存；
    //assign nice_icb_rsp_ready = state_is_ldst_rsp & nice_rsp_ready; 
-   // rsp always ready
+   // 存储器的反馈的准备信号 read 一直有效 
+   //所有的存储器请求通道的信号都是在 idle 状态开始发送的， 可能持续
    assign nice_icb_rsp_ready = 1'b1; 
-   wire [ROWBUF_IDX_W-1:0] sbuf_idx = sbuf_cmd_cnt_r; 
+   wire [COUNTER_W-1:0] sbuf_idx = sbuf_cmd_cnt_r; 
 
    assign nice_icb_cmd_valid =   (state_is_idle & nice_req_valid & custom_mem_op)
-                              | nice_icb_cmd_valid_lbuf
+                              | nice_icb_cmd_valid_labuf
+                              | nice_icb_cmd_valid_lbbuf
+                              | nice_icb_cmd_valid_lpbuf
                               | nice_icb_cmd_valid_sbuf
-                              | nice_icb_cmd_valid_rowsum
                               ;
    assign nice_icb_cmd_addr  = (state_is_idle & custom_mem_op) ? nice_req_rs1 :
                               maddr_acc_r;
-   assign nice_icb_cmd_read  = (state_is_idle & custom_mem_op) ? (custom3_lbuf | custom3_rowsum) : 
+   assign nice_icb_cmd_read  = (state_is_idle & custom_mem_op) ? (custom3_labuf | custom3_lbbuf | custom3_lpbuf | custom3_stawork) : 
                               state_is_sbuf ? 1'b0 : 
                               1'b1;
-   assign nice_icb_cmd_wdata = (state_is_idle & custom3_sbuf) ? rowbuf_r[sbuf_idx] :
-                              state_is_sbuf ? rowbuf_r[sbuf_idx] : 
+   assign nice_icb_cmd_wdata = (state_is_idle & custom3_sbuf) ? resregfile_r[sbuf_idx] :
+                              state_is_sbuf ? resregfile_r[sbuf_idx] : 
                               `E203_XLEN'b0; 
 
    //assign nice_icb_cmd_wmask = {`sirv_XLEN_MW{custom3_sbuf}} & 4'b1111;
    assign nice_icb_cmd_size  = 2'b10;
-   assign nice_mem_holdup    =  state_is_lbuf | state_is_sbuf | state_is_rowsum; 
+   assign nice_mem_holdup    =  state_is_labuf | state_is_lbbuf |  state_is_lpbuf | state_is_sbuf ; 
 
    ////////////////////////////////////////////////////////////
    // nice_active

@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="VLeXUzMlkxY-AijOh3s4" name="第 1 页">
-        <mxGraphModel dx="1751" dy="869" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4000" pageHeight="4000" math="0" shadow="0">
+        <mxGraphModel dx="1735" dy="1090" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4000" pageHeight="4000" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -1323,118 +1323,196 @@
                 <mxCell id="471" value="sel_rs为0时选择左侧输入&lt;br&gt;为1时选择右移一位结果" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="310" y="1340" width="160" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="472" value="minvmdiv" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="472" value="minvmdiv" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2000" y="2000" width="110" height="600" as="geometry"/>
                 </mxCell>
-                <mxCell id="473" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="473" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="1950" y="2075" as="sourcePoint"/>
                         <mxPoint x="2000" y="2075" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="474" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="474" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="1950" y="2135" as="sourcePoint"/>
                         <mxPoint x="2000" y="2135" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="475" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="475" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="1950" y="2205" as="sourcePoint"/>
                         <mxPoint x="2000" y="2205" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="476" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="476" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="1950" y="2265" as="sourcePoint"/>
                         <mxPoint x="2000" y="2265" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="477" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="477" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="1950" y="2324.2" as="sourcePoint"/>
                         <mxPoint x="2000" y="2324.2" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="478" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="478" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="1950" y="2384.2" as="sourcePoint"/>
                         <mxPoint x="2000" y="2384.2" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="479" value="clk" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="479" value="clk" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="1940" y="2050" width="40" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="480" value="rst" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="480" value="rst" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="1940" y="2110" width="40" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="481" value="data_in[31:0]" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="481" value="data_in[31:0]" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="1915" y="2180" width="90" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="482" value="loada" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="482" value="loada" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="1935" y="2230" width="50" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="483" value="loadb" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="483" value="loadb" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="1935" y="2295" width="50" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="484" value="loadc" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="484" value="loadc" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="1935" y="2355" width="50" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="485" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="485" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="1950" y="2445" as="sourcePoint"/>
                         <mxPoint x="2000" y="2445" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="486" value="minv_mdiv_en" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="486" value="minv_mdiv_en" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="1905" y="2415" width="100" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="487" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="487" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="1950" y="2505" as="sourcePoint"/>
                         <mxPoint x="2000" y="2505" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="488" value="minv_mdiv" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="488" value="minv_mdiv" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="1915" y="2475" width="80" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="489" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="489" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="2110" y="2280" as="sourcePoint"/>
                         <mxPoint x="2200" y="2280" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="490" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="490" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="2110" y="2369.2" as="sourcePoint"/>
                         <mxPoint x="2200" y="2370" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="491" value="out_valid" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="491" value="out_valid" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="2125" y="2245" width="70" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="492" value="result_out" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="492" value="result_out" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="2120" y="2340" width="80" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="493" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1">
+                <mxCell id="493" value="" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" edge="1">
                     <mxGeometry width="100" relative="1" as="geometry">
                         <mxPoint x="2200" y="2325" as="sourcePoint"/>
                         <mxPoint x="2110" y="2325" as="targetPoint"/>
                         <Array as="points"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="494" value="out_ready" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="494" value="out_ready" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="2120" y="2295" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="495" value="汇编程序" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="2915" y="1845" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="508" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="497" target="507">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="497" value="加载立即数（a,b,p）&amp;nbsp; 到gpr 32bit" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="3200" y="1815" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="504" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="498" target="503">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="498" value="sw gpr 数据到DTCM中" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="3200" y="1990" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="501" value="" style="edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="503" target="497">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="3240" y="2090" as="sourcePoint"/>
+                        <mxPoint x="2790" y="2090" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="3130" y="2100"/>
+                            <mxPoint x="3130" y="1770"/>
+                            <mxPoint x="3300" y="1770"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="512" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="503" target="506">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="503" value="counter=8?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="3250" y="2070" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="506" value="coustom指令 读gpr获取地址 读取DTCM（load_a_div）(load_p)(load_b)" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="3200" y="2180" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="511" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="507" target="498">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="507" value="加载load基地址 到gpr 32bit" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="3200" y="1910" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="518" value="" style="edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="506" target="497">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="3180" y="2225" as="sourcePoint"/>
+                        <mxPoint x="3300" y="1810" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="3300" y="2290"/>
+                            <mxPoint x="3060" y="2290"/>
+                            <mxPoint x="3060" y="1720"/>
+                            <mxPoint x="3300" y="1720"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="525" value="" style="edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="506" target="526">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="3150" y="2410" as="sourcePoint"/>
+                        <mxPoint x="3300" y="2320" as="targetPoint"/>
+                        <Array as="points"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="530" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="526" target="529">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="526" value="coustom指令 startwork" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="3200" y="2330" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="527" value="coustom指令 读gpr获取地址将计算结果writeback 到DTCM中" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="3200" y="2510" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="531" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="529" target="527">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="529" value="加载立即数到gpr 为写回运算结果的DTCM基地址" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="3200" y="2430" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="532" value="DTCM 区间&lt;br&gt;0x8002_2000-0x9000_0000" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="3540" y="1955" width="220" height="90" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

@@ -182,7 +182,7 @@ module e203_subsys_nice_core (
    wire state_is_work     = (state_r == WORK); 
 
 
-  reg work_minv_mdiv;
+  reg work_minv_mdiv = 1'b0;
   always@(posedge custom_mem_op)begin
     work_minv_mdiv <= (custom_mem_op == custom3_labuf_inv) ? 1'b1 : 1'b0;
   end
@@ -420,54 +420,125 @@ module e203_subsys_nice_core (
 //----------------------------------
    
    wire [31:0] divout; //此处直接输出32bit 
-   wire load_a,load_b,load_p,minvdiv_en,kong;
-   wire [31:0] work_div;
+   wire load_a,load_b,load_p,minvdiv_en,kong;//kong;
 
    wire[31:0] work_in_mux;
    wire complete ;
-   //直接输入256   没什么用 还是一个周期32bit 要8个周期
-   assign work_in_mux = ({256{load_a}} & {{aregfile_r[7]},{aregfile_r[6]},{aregfile_r[5]},{aregfile_r[4]},
-			                		{aregfile_r[3]},{aregfile_r[2]},{aregfile_r[1]},{aregfile_r[0]} } )
-                      | ({256{load_b}} & {{bregfile_r[7]},{bregfile_r[6]},{bregfile_r[5]},{bregfile_r[4]},
-			                		{bregfile_r[3]},{bregfile_r[2]},{bregfile_r[1]},{bregfile_r[0]} } )
-			                | ({256{load_p}} & {{pregfile_r[7]},{pregfile_r[6]},{pregfile_r[5]},{pregfile_r[4]},
-			                		{pregfile_r[3]},{pregfile_r[2]},{pregfile_r[1]},{pregfile_r[0]} } );
+   wire minvdiv_ready;
 
-   wire[2:0] work_cnt_r;
-   wire[2:0] work_cnt_nxt;
-   wire[1:0] work_cnt_incount;
+   wire[15:0] work_cnt_r;
+   wire[2:0]  work_store_cnt;       //用于计数计算输出结果的idx
+   wire       work_store_clr;
+   wire[2:0]  work_store_cnt_nxt;
+   wire       work_store_incr;
+   wire[15:0] work_cnt_nxt;
+   wire[1:0]  work_cnt_incount;
    wire work_cnt_incr;
    wire work_cnt_ena ;
    wire work_cnt_clr;
-   wire[2:0] work_cnt_last = 3'b100;
-  
+   wire[15:0] work_cnt_last = 6'b100;
+   wire minv_mdiv_rdy;
   //work下自动自增 
-   assign work_cnt_clr = (work_cnt_r == work_cnt_last);
-   assign work_cnt_incr = (work_cnt_r != work_cnt_last);
-   assign work_cnt_incount = (load_p && work_minv_mdiv) ? 2'd2 : 2'd1;
+
+   reg [4:0] current_workstate;   //start状态下的工作状态机 用于向MINV_MDIV装载各个数据 以及保存结果  
+   reg [4:0] next_workstate;
+   parameter WORK_IDLE       = 5'b00000;
+   parameter WORK_LOAD_A     = 5'b00001;
+   parameter WORK_LOAD_P     = 5'b00010;
+   parameter WORK_LOAD_B     = 5'b00011;
+   parameter WORK_START      = 5'b00100;
+   parameter WORK_STORE_RES  = 5'b00101;
+
+   assign work_store_clr     = current_workstate == WORK_IDLE;
+   assign work_store_incr    = state_is_work & (current_workstate == WORK_STORE_RES) & minv_mdiv_rdy & complete;
+   assign work_store_cnt_nxt = ({3{work_store_clr}} & {3{1'b0}})
+                             | ({3{work_store_incr}} & (work_store_cnt + 1'b1));
+   sirv_gnrl_dfflr #(5)   work_state_dff (state_is_work, next_workstate, current_workstate, nice_clk, nice_rst_n);
+   sirv_gnrl_dfflr #(3)   work_storeres_dff (work_store_incr, work_store_cnt_nxt, work_store_cnt, nice_clk, nice_rst_n);
+
+  always @ (*)
+  begin 
+   if(!nice_rst_n) begin 
+    next_workstate <= WORK_IDLE;
+   end
+   else begin 
+   case(current_workstate)
+    WORK_IDLE: begin 
+    if(state_is_work & work_cnt_r == 16'b0)
+      next_workstate <= WORK_LOAD_A;
+    else
+    next_workstate <= WORK_IDLE;
+    end
+    WORK_LOAD_A : begin 
+      if(state_is_work & work_cnt_r == 16'd7)
+        next_workstate <= WORK_LOAD_P;
+      else
+        next_workstate <= WORK_LOAD_A;
+    end
+    WORK_LOAD_P : begin 
+    if(state_is_work & work_cnt_r == 16'd15 & !work_minv_mdiv)
+      next_workstate <= WORK_LOAD_B;
+    else if(state_is_work & work_cnt_r == 16'd15 & work_minv_mdiv)
+      next_workstate <= WORK_START;
+    else
+      next_workstate <= WORK_LOAD_P;
+    end
+    WORK_LOAD_B : begin 
+    if(state_is_work & work_cnt_r == 16'd23)
+      next_workstate <= WORK_START;
+    else
+      next_workstate <= WORK_LOAD_B;
+    end
+    WORK_START : begin 
+    if(minv_mdiv_rdy)
+      next_workstate <= WORK_STORE_RES;
+    else
+      next_workstate <= WORK_START;
+    end
+    WORK_STORE_RES : begin 
+      if(state_is_work & work_store_cnt == 3'd7)
+        next_workstate <= WORK_IDLE;
+      else
+        next_workstate <= WORK_STORE_RES;
+      end
+    default : begin 
+      next_workstate <= WORK_IDLE;
+    end 
+   endcase
+   end 
+  end
+
+
+   assign work_cnt_clr = current_workstate == WORK_IDLE;
+   assign work_cnt_incr = current_workstate != WORK_IDLE;
    assign work_cnt_ena     = state_is_work & (work_cnt_incr);
-   assign work_cnt_nxt     = ({3{work_cnt_clr}} & {3{1'b0}})
-                           | ({3{work_cnt_incr}} & (work_cnt_r + work_cnt_incount));
+   assign work_cnt_nxt     = ({16{work_cnt_clr}} & {16{1'b0}})
+                           | ({16{work_cnt_incr}} & (work_cnt_r + 1'b1));
 
-   sirv_gnrl_dfflr #(3)   work_cnt_dfflr (work_cnt_ena, work_cnt_nxt, work_cnt_r, nice_clk, nice_rst_n);
+   sirv_gnrl_dfflr #(16)   work_cnt_dfflr (work_cnt_ena, work_cnt_nxt, work_cnt_r, nice_clk, nice_rst_n);
 
-   assign load_a     = (state_is_work & (work_cnt_r == 3'd0));
-   assign load_p     = (state_is_work & (work_cnt_r == 3'd1));
-   assign load_b     = (state_is_work & (work_cnt_r == 3'd2));
-   assign minvdiv_en = (state_is_work & (work_cnt_r == 3'd3));
-   assign kong       = (state_is_work & (work_cnt_r == 3'd4));
+   assign load_a        = current_workstate == WORK_LOAD_A;
+   assign load_p        = current_workstate == WORK_LOAD_P;
+   assign load_b        = current_workstate == WORK_LOAD_B;
+   assign minvdiv_en    = work_cnt_r == 16'd24;
+   assign minvdiv_ready = current_workstate == WORK_STORE_RES;
+   //assign kong        = (state_is_work & (work_cnt_r == 6'd));
   
+   assign work_in_mux = ({32{load_a}} & aregfile_r[work_cnt_r[2:0]]) //取counter的低三位 做索引 生成输入数据
+                      | ({32{load_b}} & bregfile_r[work_cnt_r[2:0]])
+                      | ({32{load_p}} & pregfile_r[work_cnt_r[2:0]]);
+
    MINV_MDIV  MINV_MDIV(
   .clk          (nice_clk),
   .rst          (!nice_rst_n),
   .loada        (load_a),
   .loadb        (load_b),
   .loadp        (load_p),
-  .minv_mdiv_rdy(),             //output
+  .minv_mdiv_rdy(minv_mdiv_rdy),             //output
   .datain       (work_in_mux),
   .minv_mdiv    (work_minv_mdiv),
   .minv_mdiv_en (minvdiv_en),
-  .out_ready    (minvdiv_en),
+  .out_ready    (minvdiv_ready),
   .out_valid    (complete),
   .result_out   (divout)
   );
@@ -475,8 +546,7 @@ module e203_subsys_nice_core (
    //sirv_gnrl_dfflr #(`E203_XLEN)   rowsum_acc_dfflr (rowsum_acc_ena, rowsum_acc_nxt, rowsum_acc_r, nice_clk, nice_rst_n);
  // sirv_gnrl_dfflr #(128)   work_div_dfflr (complete, aesout , out, nice_clk, nice_rst_n);
 
-   assign work_done = state_is_work & complete;
-   assign work_div  = divout;
+   assign work_done = state_is_work & work_store_cnt == 3'd7; //结果存储完成后 即work_done
 
    // 当nicecore完成计算，发出work_done rsp通道开始握手； 
    assign nice_rsp_valid_work = state_is_work & work_done;
@@ -564,10 +634,9 @@ module e203_subsys_nice_core (
    genvar l;
    generate 
      for (l=0; l<8; l=l+1) begin:gen_resregfile
-       assign resregfile_we[l] =   (work_done);
-                             
+       assign resregfile_we[l] =   (work_store_incr & (work_store_cnt == l[COUNTER_W-1:0]));
   
-       assign resregfile_wdat[l] =   ({`E203_XLEN{resregfile_we[l]}} & work_div   ) ;
+       assign resregfile_wdat[l] =   ({`E203_XLEN{resregfile_we[l]}} & divout   ) ;
 
        sirv_gnrl_dfflr #(`E203_XLEN) resregfile_dfflr (resregfile_we[l], resregfile_wdat[l], resregfile_r[l], nice_clk, nice_rst_n);
      end
@@ -620,7 +689,7 @@ module e203_subsys_nice_core (
    assign nice_rsp_hsked = nice_rsp_valid & nice_rsp_ready; 
    assign nice_icb_rsp_hsked = nice_icb_rsp_valid & nice_icb_rsp_ready;
    assign nice_rsp_valid =  nice_rsp_valid_sbuf | nice_rsp_valid_labuf | nice_rsp_valid_lbbuf| nice_rsp_valid_lpbuf | nice_rsp_valid_work;
-   assign nice_rsp_rdat  = {`E203_XLEN{state_is_work}} & work_div;
+   assign nice_rsp_rdat  = {`E203_XLEN{state_is_work}} & divout;
 
    // 存储器请求error 在存储器rsp 出现错误后，随即通过nice反馈通道 反馈error （nice_rsp_err）
    //assign nice_rsp_err_irq  =   (nice_icb_rsp_hsked & nice_icb_rsp_err)

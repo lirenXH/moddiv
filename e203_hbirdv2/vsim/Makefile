@@ -1,8 +1,11 @@
 SIM_DIR     := ${PWD}
 RUN_DIR      := ${PWD}/run
 
-TESTNAME     := rv32ui-p-lh 
-TESTCASE     := ${RUN_DIR}/../../riscv-tools/riscv-tests/isa/generated/${TESTNAME}
+#TESTNAME     := rv32ui-p-lh 
+#TESTCASE     := ${RUN_DIR}/../../riscv-tools/riscv-tests/isa/generated/${TESTNAME}
+
+TESTNAME     := moddiv
+TESTCASE     := /home/xuhao/moddiv/e203_hbirdv2/hbird-sdk/application/baremetal/${TESTNAME}/${TESTNAME}
 
 SIM          := iverilog 
 DUMPWAVE     := 1

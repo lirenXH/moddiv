@@ -181,11 +181,11 @@ module e203_subsys_nice_core (
    wire state_is_sbuf     = (state_r == SBUF); 
    wire state_is_work     = (state_r == WORK); 
 
-
-  reg work_minv_mdiv = 1'b0;
-  always@(posedge custom_mem_op)begin
-    work_minv_mdiv <= (custom_mem_op == custom3_labuf_inv) ? 1'b1 : 1'b0;
-  end
+   wire work_minv_mdiv;
+   wire work_minv_mdiv_nxt;
+   assign work_minv_mdiv_nxt = custom_mem_op == custom3_labuf_inv ? 1'b1 : 1'b0;
+   //仅当为loada时 进行判断 模除还是模逆
+   sirv_gnrl_dfflr #(1)   minv_mdiv_dfflr (custom3_labuf, work_minv_mdiv_nxt, work_minv_mdiv, nice_clk, nice_rst_n);
 
    assign state_idle_exit_ena = state_is_idle & nice_req_hsked & ~illgel_instr; 
    assign state_idle_nxt = custom3_labuf    ? LABUF   : 

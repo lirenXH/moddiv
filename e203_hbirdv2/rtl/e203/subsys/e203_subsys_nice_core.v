@@ -440,7 +440,7 @@ module e203_subsys_nice_core (
    wire minv_mdiv_rdy;
   //work下自动自增 
 
-   reg [4:0] current_workstate;   //start状态下的工作状态机 用于向MINV_MDIV装载各个数据 以及保存结果  
+   wire [4:0] current_workstate;   //start状态下的工作状态机 用于向MINV_MDIV装载各个数据 以及保存结果  
    reg [4:0] next_workstate;
    parameter WORK_IDLE       = 5'b00000;
    parameter WORK_LOAD_A     = 5'b00001;

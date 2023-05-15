@@ -4,8 +4,6 @@
 #include "hbird_sdk_soc.h"
  extern void mmod(const int a_addr,const int p_addr,const int raddr);
  extern void mdiv(const int a_addr,const int b_addr,const int p_addr,const int raddr);
-//extern void mmod();
-//extern void mdiv();
 int getIndexOfSigns(char ch);
 int main()
 {
@@ -27,7 +25,7 @@ int main()
 
 	int t = 1;
     printf("enter value a = ");
-	for(int i = 0;i < 8;i++)
+	for(int i = 0;i < 8;i++)                       //存入数据A
 	{
         for(int j = 8;j >=0 ;j--){                //额外一个给_
             if(a_value_t[i*9 + j]!= '_'){
@@ -46,7 +44,7 @@ int main()
         a_ptr = a_ptr + 1;//1 对应32bit
     }
 
-    if(div_or_mod == 0){
+    if(div_or_mod == 0){                           //若为模除存入数据B
         printf("enter value b = ");
         for(int i = 0;i < 8;i++)
         {
@@ -67,7 +65,7 @@ int main()
         }
     }
 
-    printf("enter value p = ");
+    printf("enter value p = ");                    //存入数据P
 	for(int i = 0;i < 8;i++)
 	{
         for(int j = 8;j >=0 ;j--){                
@@ -87,21 +85,22 @@ int main()
         p_ptr = p_ptr + 1;
     }
 
-    printf("moddiv begin!\r\n");
-    if(div_or_mod == 0)
-        mdiv(a_addr,b_addr,p_addr,raddr);                         //模除
-    else
-        mmod(a_addr,p_addr,raddr);                                //模逆
-    printf("moddiv complete!\r\nresult = ");                 
 
-    for (int i = 7; i >= 0; i--)
-    {
+    if(div_or_mod == 0){
+        printf("mdiv begin!\r\n");                 //调用NICE模块
+        mdiv(a_addr,b_addr,p_addr,raddr);          //模除
+        printf("mdiv complete!\r\nresult = "); 
+    }else{
+        printf("mmod begin!\r\n");                 
+        mmod(a_addr,p_addr,raddr);                 //模逆
+        printf("mmod complete!\r\nresult = "); 
+    }                
+
+    for (int i = 7; i >= 0; i--){                  //结果打印
         raddr =  0x90001000 + i * 4;
         printf("%08x_",*(int *)raddr);
     }
     printf("\n");
-
-
     return 0;
 }
  
